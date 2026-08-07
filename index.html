@@ -1,9 +1,11 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#050505">
+  <meta name="description" content="ZeZo App Beta Experience">
   <title>ZeZo App — Beta</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,9 +15,12 @@
   <style>
     :root {
       --black: #050505;
+      --dark: #090909;
       --white: #f5f5f5;
-      --gray: #999;
-      --line: rgba(255, 255, 255, .2);
+      --gray: #888;
+      --muted: #4f4f4f;
+      --line: rgba(255, 255, 255, .16);
+      --soft-line: rgba(255, 255, 255, .07);
       --ease: cubic-bezier(.16, 1, .3, 1);
     }
 
@@ -35,31 +40,170 @@
       background: var(--black);
       color: var(--white);
       font-family: "Space Grotesk", Arial, sans-serif;
+      cursor: none;
     }
 
+    body.loading,
     body.modal-open {
       overflow: hidden;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      pointer-events: none;
-      opacity: .08;
-      background-image:
-        linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
-      background-size: 70px 70px;
-      mask-image: linear-gradient(to bottom, #000, transparent 85%);
+    button {
+      font-family: inherit;
     }
 
-    body::after {
-      content: "";
+    /* =========================
+       CUSTOM CURSOR DESKTOP
+    ========================== */
+
+    .cursor-dot,
+    .cursor-ring {
+      position: fixed;
+      z-index: 999;
+      pointer-events: none;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+    }
+
+    .cursor-dot {
+      width: 5px;
+      height: 5px;
+      background: #fff;
+      transition: opacity .25s ease;
+    }
+
+    .cursor-ring {
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(255,255,255,.75);
+      transition:
+        width .35s var(--ease),
+        height .35s var(--ease),
+        background .35s ease,
+        border-color .35s ease,
+        opacity .25s ease;
+    }
+
+    body.cursor-ready .cursor-dot,
+    body.cursor-ready .cursor-ring {
+      opacity: 1;
+    }
+
+    body.cursor-hover .cursor-ring {
+      width: 64px;
+      height: 64px;
+      background: rgba(255,255,255,.1);
+      border-color: #fff;
+      backdrop-filter: blur(3px);
+    }
+
+    /* =========================
+       LOADING SCREEN
+    ========================== */
+
+    .loader {
       position: fixed;
       inset: 0;
-      z-index: 11;
+      z-index: 500;
+      display: grid;
+      place-items: center;
+      background: var(--black);
+      transition:
+        opacity .9s var(--ease),
+        visibility .9s var(--ease),
+        transform 1s var(--ease);
+    }
+
+    .loader.hide {
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(1.08);
+    }
+
+    .loader-inner {
+      width: min(430px, calc(100% - 48px));
+    }
+
+    .loader-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+      color: #777;
+      font-size: 9px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    .loader-logo {
+      margin-bottom: 24px;
+      font-size: clamp(50px, 12vw, 100px);
+      font-weight: 600;
+      letter-spacing: -.1em;
+      line-height: .8;
+    }
+
+    .loader-logo span {
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,.7);
+    }
+
+    .loader-status {
+      min-height: 20px;
+      margin-bottom: 14px;
+      color: #aaa;
+      font-size: 10px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .loader-track {
+      position: relative;
+      height: 2px;
+      overflow: hidden;
+      background: rgba(255,255,255,.13);
+    }
+
+    .loader-progress {
+      width: 0%;
+      height: 100%;
+      background: #fff;
+      box-shadow: 0 0 18px #fff;
+      transition: width .3s ease;
+    }
+
+    .loader-bottom {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 13px;
+      color: #4f4f4f;
+      font-size: 9px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    /* =========================
+       BACKGROUND EFFECT
+    ========================== */
+
+    .grid-background {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      opacity: .065;
+      background-image:
+        linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px);
+      background-size: 75px 75px;
+      mask-image: linear-gradient(to bottom, #000, transparent 90%);
+    }
+
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 3;
       pointer-events: none;
       opacity: .035;
       background: repeating-linear-gradient(
@@ -73,78 +217,147 @@
     .noise {
       position: fixed;
       inset: 0;
-      z-index: 12;
+      z-index: 4;
       pointer-events: none;
       opacity: .025;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='.8'/%3E%3C/svg%3E");
     }
 
-    .top-bar {
+    /* =========================
+       TOP NAVIGATION
+    ========================== */
+
+    .topbar {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      z-index: 30;
+      z-index: 50;
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      padding: 22px clamp(22px, 5vw, 76px);
-      mix-blend-mode: difference;
+      padding: 25px clamp(22px, 5vw, 78px);
       pointer-events: none;
+      mix-blend-mode: difference;
     }
 
     .brand {
-      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
       font-weight: 700;
-      letter-spacing: .28em;
+      letter-spacing: .27em;
       text-transform: uppercase;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 25px;
+      height: 25px;
+      border: 1px solid #fff;
+      border-radius: 50%;
+      font-size: 9px;
+      letter-spacing: 0;
+    }
+
+    .version {
+      color: #aaa;
+      font-size: 9px;
+      letter-spacing: .22em;
     }
 
     .counter {
       color: #aaa;
-      font-size: 11px;
-      letter-spacing: .16em;
+      font-size: 10px;
+      letter-spacing: .2em;
     }
+
+    /* =========================
+       SIDE NAVIGATION
+    ========================== */
 
     .side-line {
       position: fixed;
       top: 50%;
-      right: clamp(20px, 4vw, 55px);
-      z-index: 20;
+      right: clamp(22px, 4vw, 58px);
+      z-index: 30;
       width: 1px;
-      height: 110px;
+      height: 122px;
       transform: translateY(-50%);
-      background: linear-gradient(to bottom, transparent, #fff, transparent);
-      opacity: .35;
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(255,255,255,.8),
+        transparent
+      );
+      opacity: .42;
     }
 
     .progress {
       position: fixed;
       top: 50%;
-      right: clamp(20px, 4vw, 55px);
-      z-index: 21;
+      right: clamp(22px, 4vw, 58px);
+      z-index: 31;
       display: flex;
       flex-direction: column;
-      gap: 13px;
+      gap: 14px;
       transform: translate(50%, -50%);
     }
 
-    .progress span {
+    .progress-item {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 9px;
+      height: 9px;
+      cursor: pointer;
+    }
+
+    .progress-item::before {
+      content: "";
       width: 5px;
       height: 5px;
       border: 1px solid #fff;
       border-radius: 50%;
-      cursor: pointer;
       transition: .5s var(--ease);
     }
 
-    .progress span.active {
-      height: 27px;
-      border-radius: 5px;
-      background: #fff;
-      box-shadow: 0 0 18px rgba(255,255,255,.9);
+    .progress-item::after {
+      content: attr(data-label);
+      position: absolute;
+      right: 18px;
+      color: #888;
+      font-size: 8px;
+      letter-spacing: .15em;
+      opacity: 0;
+      transform: translateX(8px);
+      transition: .4s var(--ease);
     }
 
+    .progress-item:hover::after {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .progress-item.active::before {
+      width: 6px;
+      height: 28px;
+      border-radius: 5px;
+      border-color: #fff;
+      background: #fff;
+      box-shadow: 0 0 20px rgba(255,255,255,.8);
+    }
+
+    /* =========================
+       SLIDER
+    ========================== */
+
     .slides {
+      position: relative;
+      z-index: 5;
       height: 100dvh;
       min-height: 100svh;
       overflow-y: auto;
@@ -161,7 +374,7 @@
       align-items: center;
       min-height: 100dvh;
       height: 100dvh;
-      padding: 100px clamp(24px, 10vw, 160px);
+      padding: 100px clamp(25px, 10vw, 160px);
       overflow: hidden;
       isolation: isolate;
       scroll-snap-align: start;
@@ -171,14 +384,14 @@
     .slide::before {
       content: "";
       position: absolute;
-      inset: -10%;
+      inset: -12%;
       z-index: -1;
       pointer-events: none;
       opacity: 0;
-      transform: scale(1.08);
+      transform: scale(1.12);
       transition:
-        opacity 1.2s ease,
-        transform 1.6s var(--ease);
+        opacity 1.3s ease,
+        transform 1.8s var(--ease);
     }
 
     .slide.active::before {
@@ -187,34 +400,41 @@
     }
 
     .slide-one::before {
-      background: radial-gradient(
-        circle at 78% 45%,
-        rgba(255,255,255,.08),
-        transparent 30%
-      );
+      background:
+        radial-gradient(
+          circle at 80% 47%,
+          rgba(255,255,255,.1),
+          transparent 27%
+        );
     }
 
     .slide-two::before {
-      background: radial-gradient(
-        circle at 78% 50%,
-        rgba(255,255,255,.1),
-        transparent 28%
-      );
+      background:
+        radial-gradient(
+          circle at 78% 50%,
+          rgba(255,255,255,.1),
+          transparent 28%
+        );
     }
 
     .slide-three::before {
-      background: radial-gradient(
-        circle at 50% 42%,
-        rgba(255,255,255,.08),
-        transparent 32%
-      );
+      background:
+        radial-gradient(
+          circle at 50% 42%,
+          rgba(255,255,255,.09),
+          transparent 34%
+        );
     }
 
-    /* Desktop tidak menggunakan blur */
+    /*
+      LAPTOP:
+      Tidak ada blur pada slide 2 dan 3.
+      Semua konten langsung terlihat tajam.
+    */
     .slide-content {
       position: relative;
-      z-index: 2;
-      width: min(930px, 100%);
+      z-index: 6;
+      width: min(950px, 100%);
       opacity: 1;
       transform: none;
       filter: none;
@@ -223,49 +443,49 @@
     .eyebrow {
       display: inline-flex;
       align-items: center;
-      gap: 11px;
-      margin-bottom: 26px;
-      color: var(--gray);
+      gap: 12px;
+      margin-bottom: 27px;
+      color: #888;
       font-size: 10px;
-      letter-spacing: .25em;
+      letter-spacing: .27em;
       text-transform: uppercase;
     }
 
     .eyebrow::before {
       content: "";
-      width: 30px;
+      width: 31px;
       height: 1px;
       background: #fff;
     }
 
     h1,
     h2 {
-      max-width: 850px;
+      max-width: 900px;
       font-weight: 600;
-      letter-spacing: -.065em;
-      line-height: .96;
+      letter-spacing: -.075em;
+      line-height: .92;
     }
 
     h1 {
-      font-size: clamp(54px, 10vw, 142px);
+      font-size: clamp(55px, 10vw, 145px);
     }
 
     h2 {
-      font-size: clamp(42px, 7vw, 92px);
+      font-size: clamp(45px, 7.3vw, 96px);
     }
 
     .outline {
       color: transparent;
-      -webkit-text-stroke: 1px rgba(255,255,255,.7);
+      -webkit-text-stroke: 1px rgba(255,255,255,.75);
     }
 
     .description {
       max-width: 620px;
       margin-top: 42px;
-      color: #bcbcbc;
-      font-size: clamp(17px, 2vw, 25px);
-      line-height: 1.5;
-      letter-spacing: -.02em;
+      color: #aaa;
+      font-size: clamp(16px, 2vw, 24px);
+      line-height: 1.55;
+      letter-spacing: -.025em;
     }
 
     .description strong {
@@ -273,73 +493,14 @@
       font-weight: 500;
     }
 
-    .slide-number {
-      position: absolute;
-      right: clamp(45px, 10vw, 160px);
-      bottom: 85px;
-      color: #555;
-      font-size: 11px;
-      letter-spacing: .2em;
-    }
-
-    .hero-orbit {
-      position: absolute;
-      top: 50%;
-      right: -130px;
-      width: min(46vw, 560px);
-      aspect-ratio: 1;
-      transform: translateY(-50%);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 50%;
-      box-shadow:
-        0 0 0 34px rgba(255,255,255,.025),
-        0 0 0 70px rgba(255,255,255,.018);
-      animation: rotateOrbit 24s linear infinite;
-    }
-
-    .hero-orbit::before,
-    .hero-orbit::after {
-      content: "";
-      position: absolute;
-      inset: 18%;
-      border: 1px solid rgba(255,255,255,.17);
-      border-radius: 50%;
-      transform: rotate(55deg) scaleX(.45);
-    }
-
-    .hero-orbit::after {
-      transform: rotate(-55deg) scaleX(.45);
-    }
-
-    .orbit-dot {
-      position: absolute;
-      top: 12%;
-      left: 43%;
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 0 25px 7px rgba(255,255,255,.6);
-    }
-
-    @keyframes rotateOrbit {
-      from {
-        rotate: 0deg;
-      }
-
-      to {
-        rotate: 360deg;
-      }
-    }
-
     .scroll-hint {
       display: flex;
       align-items: center;
       gap: 14px;
-      margin-top: 75px;
+      margin-top: 70px;
       color: #fff;
-      font-size: 11px;
-      letter-spacing: .27em;
+      font-size: 10px;
+      letter-spacing: .3em;
       text-transform: uppercase;
       opacity: 0;
       transform: translateY(14px);
@@ -349,14 +510,14 @@
     .slide.active .scroll-hint {
       opacity: 1;
       transform: translateY(0);
-      transition-delay: 2.3s;
+      transition-delay: 2.25s;
     }
 
     .arrow {
       display: grid;
       place-items: center;
-      width: 34px;
-      height: 34px;
+      width: 35px;
+      height: 35px;
       border: 1px solid var(--line);
       border-radius: 50%;
       animation: bounce 1.6s infinite;
@@ -377,17 +538,121 @@
       }
     }
 
+    .slide-number {
+      position: absolute;
+      right: clamp(45px, 10vw, 160px);
+      bottom: 82px;
+      color: #4f4f4f;
+      font-size: 10px;
+      letter-spacing: .22em;
+    }
+
+    .slide-line {
+      position: absolute;
+      left: clamp(25px, 10vw, 160px);
+      bottom: 83px;
+      width: 75px;
+      height: 1px;
+      background: linear-gradient(to right, #fff, transparent);
+      opacity: .35;
+    }
+
+    /* =========================
+       ORBIT SLIDE 1
+    ========================== */
+
+    .hero-orbit {
+      position: absolute;
+      top: 50%;
+      right: -145px;
+      width: min(48vw, 580px);
+      aspect-ratio: 1;
+      transform: translateY(-50%);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 50%;
+      box-shadow:
+        0 0 0 35px rgba(255,255,255,.025),
+        0 0 0 74px rgba(255,255,255,.017);
+      animation: orbitRotate 25s linear infinite;
+    }
+
+    .hero-orbit::before,
+    .hero-orbit::after {
+      content: "";
+      position: absolute;
+      inset: 17%;
+      border: 1px solid rgba(255,255,255,.17);
+      border-radius: 50%;
+      transform: rotate(55deg) scaleX(.43);
+    }
+
+    .hero-orbit::after {
+      transform: rotate(-55deg) scaleX(.43);
+    }
+
+    .orbit-dot {
+      position: absolute;
+      top: 11%;
+      left: 43%;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 25px 8px rgba(255,255,255,.6);
+    }
+
+    @keyframes orbitRotate {
+      from {
+        rotate: 0deg;
+      }
+
+      to {
+        rotate: 360deg;
+      }
+    }
+
+    /* =========================
+       SLIDE 2
+    ========================== */
+
     .large-index {
       position: absolute;
-      right: 5vw;
-      bottom: 7vh;
+      right: 4vw;
+      bottom: 6vh;
       color: rgba(255,255,255,.035);
-      font-size: min(37vw, 570px);
+      font-size: min(38vw, 580px);
       font-weight: 700;
-      letter-spacing: -.12em;
+      letter-spacing: -.13em;
       line-height: .7;
       user-select: none;
     }
+
+    .system-card {
+      position: absolute;
+      right: clamp(90px, 13vw, 210px);
+      top: 24%;
+      width: 145px;
+      padding: 15px;
+      border: 1px solid var(--soft-line);
+      color: #656565;
+      font-size: 8px;
+      letter-spacing: .13em;
+      line-height: 1.8;
+      text-transform: uppercase;
+    }
+
+    .system-card::before {
+      content: "";
+      display: block;
+      width: 100%;
+      height: 2px;
+      margin-bottom: 12px;
+      background: linear-gradient(to right, #fff 40%, transparent 40%);
+    }
+
+    /* =========================
+       SLIDE 3
+    ========================== */
 
     .slide-three {
       justify-content: center;
@@ -402,15 +667,15 @@
 
     .photo-frame {
       position: relative;
-      width: min(480px, 82vw);
-      margin: 10px auto 27px;
+      width: min(470px, 82vw);
+      margin: 8px auto 27px;
       padding: 9px;
-      border: 1px solid rgba(255,255,255,.5);
+      border: 1px solid rgba(255,255,255,.55);
       background: #090909;
       box-shadow:
         16px 16px 0 rgba(255,255,255,.08),
-        0 0 60px rgba(255,255,255,.07);
-      transform: rotate(-1.5deg);
+        0 0 65px rgba(255,255,255,.08);
+      transform: rotate(-1.3deg);
       transition: .7s var(--ease);
     }
 
@@ -418,15 +683,15 @@
       transform: rotate(0) scale(1.025);
       box-shadow:
         20px 20px 0 rgba(255,255,255,.1),
-        0 0 90px rgba(255,255,255,.12);
+        0 0 95px rgba(255,255,255,.14);
     }
 
     .photo-frame::before,
     .photo-frame::after {
       content: "";
       position: absolute;
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
       border-color: #fff;
       border-style: solid;
     }
@@ -448,30 +713,40 @@
       width: 100%;
       aspect-ratio: 1 / 1;
       object-fit: cover;
-      filter: grayscale(1) contrast(1.1);
+      filter: grayscale(1) contrast(1.12);
+    }
+
+    .image-label {
+      position: absolute;
+      right: 18px;
+      bottom: 17px;
+      padding: 5px 8px;
+      background: rgba(0,0,0,.75);
+      color: #aaa;
+      font-size: 7px;
+      letter-spacing: .15em;
     }
 
     .app-name {
       margin-bottom: 25px;
       font-size: 18px;
       font-weight: 600;
-      letter-spacing: .38em;
+      letter-spacing: .4em;
       text-transform: uppercase;
     }
 
     .login-btn {
       position: relative;
-      min-width: 180px;
-      padding: 16px 28px;
+      min-width: 185px;
+      padding: 17px 30px;
       overflow: hidden;
       border: 1px solid #fff;
       background: #fff;
       color: #050505;
       cursor: pointer;
-      font-family: inherit;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: .22em;
+      letter-spacing: .25em;
       text-transform: uppercase;
       transition: .35s var(--ease);
     }
@@ -482,7 +757,7 @@
       inset: 0;
       background: #050505;
       transform: translateX(-101%);
-      transition: .45s var(--ease);
+      transition: .5s var(--ease);
     }
 
     .login-btn span {
@@ -492,7 +767,7 @@
 
     .login-btn:hover {
       color: #fff;
-      box-shadow: 0 0 35px rgba(255,255,255,.25);
+      box-shadow: 0 0 40px rgba(255,255,255,.25);
     }
 
     .login-btn:hover::before {
@@ -501,26 +776,31 @@
 
     .footer-note {
       position: absolute;
-      bottom: 27px;
-      color: #555;
-      font-size: 9px;
+      bottom: 25px;
+      color: #4f4f4f;
+      font-size: 8px;
       letter-spacing: .2em;
       text-transform: uppercase;
     }
 
-    /* Popup maintenance */
+    /* =========================
+       MODAL MAINTENANCE
+    ========================== */
+
     .modal {
       position: fixed;
       inset: 0;
-      z-index: 100;
+      z-index: 200;
       display: grid;
       place-items: center;
       padding: 24px;
-      background: rgba(0,0,0,.78);
-      backdrop-filter: blur(14px);
+      background: rgba(0,0,0,.8);
+      backdrop-filter: blur(15px);
       opacity: 0;
       visibility: hidden;
-      transition: opacity .45s ease, visibility .45s ease;
+      transition:
+        opacity .45s ease,
+        visibility .45s ease;
     }
 
     .modal.show {
@@ -530,16 +810,18 @@
 
     .modal-box {
       position: relative;
-      width: min(420px, 100%);
-      padding: 48px 32px 38px;
-      border: 1px solid rgba(255,255,255,.55);
+      width: min(430px, 100%);
+      padding: 50px 32px 38px;
+      border: 1px solid rgba(255,255,255,.58);
       background:
-        linear-gradient(135deg, rgba(255,255,255,.08), transparent 35%),
+        linear-gradient(135deg, rgba(255,255,255,.09), transparent 35%),
         #080808;
-      box-shadow: 0 25px 100px rgba(0,0,0,.8);
+      box-shadow:
+        0 25px 100px rgba(0,0,0,.9),
+        0 0 50px rgba(255,255,255,.04);
       text-align: center;
-      transform: translateY(30px) scale(.94);
-      transition: transform .6s var(--ease);
+      transform: translateY(35px) scale(.93);
+      transition: transform .65s var(--ease);
     }
 
     .modal.show .modal-box {
@@ -549,9 +831,19 @@
     .modal-box::before {
       content: "SYSTEM MESSAGE // BETA";
       position: absolute;
-      top: 15px;
+      top: 16px;
       left: 20px;
       color: #666;
+      font-size: 8px;
+      letter-spacing: .16em;
+    }
+
+    .modal-box::after {
+      content: "ZZ-503";
+      position: absolute;
+      right: 20px;
+      bottom: 17px;
+      color: #444;
       font-size: 8px;
       letter-spacing: .16em;
     }
@@ -560,8 +852,10 @@
       position: absolute;
       top: 13px;
       right: 17px;
-      width: 28px;
-      height: 28px;
+      display: grid;
+      place-items: center;
+      width: 29px;
+      height: 29px;
       border: 1px solid var(--line);
       border-radius: 50%;
       background: transparent;
@@ -569,7 +863,7 @@
       cursor: pointer;
       font-size: 18px;
       line-height: 1;
-      transition: .3s ease;
+      transition: .35s ease;
     }
 
     .close-btn:hover {
@@ -579,21 +873,39 @@
     }
 
     .modal-icon {
+      position: relative;
       display: grid;
       place-items: center;
-      width: 48px;
-      height: 48px;
+      width: 52px;
+      height: 52px;
       margin: 0 auto 25px;
       border: 1px solid #fff;
       border-radius: 50%;
-      font-size: 18px;
-      box-shadow: 0 0 30px rgba(255,255,255,.15);
+      font-size: 19px;
+      box-shadow: 0 0 30px rgba(255,255,255,.16);
+    }
+
+    .modal-icon::before,
+    .modal-icon::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+    }
+
+    .modal-icon::before {
+      inset: -8px;
+    }
+
+    .modal-icon::after {
+      inset: -16px;
+      opacity: .45;
     }
 
     .modal-title {
-      margin-bottom: 10px;
-      font-size: 22px;
-      letter-spacing: -.03em;
+      margin-bottom: 11px;
+      font-size: 23px;
+      letter-spacing: -.04em;
     }
 
     .modal-text {
@@ -602,10 +914,35 @@
       line-height: 1.7;
     }
 
-    /* HP tetap menggunakan efek blur */
+    /* =========================
+       RESPONSIVE HP
+    ========================== */
+
     @media (max-width: 700px) {
-      .top-bar {
+      body {
+        cursor: auto;
+      }
+
+      .cursor-dot,
+      .cursor-ring {
+        display: none;
+      }
+
+      .topbar {
         padding: 20px;
+      }
+
+      .brand {
+        font-size: 10px;
+      }
+
+      .brand-mark {
+        width: 22px;
+        height: 22px;
+      }
+
+      .version {
+        display: none;
       }
 
       .side-line,
@@ -616,16 +953,17 @@
       .slides {
         height: 100svh;
         min-height: 100svh;
-        scroll-snap-type: y mandatory;
       }
 
       .slide {
         height: 100svh;
         min-height: 100svh;
         padding: 90px 25px 60px;
-        scroll-snap-stop: always;
       }
 
+      /*
+        Blur hanya aktif di HP.
+      */
       .slide-content {
         opacity: .25;
         transform: translateY(30px) scale(.985);
@@ -643,10 +981,10 @@
       }
 
       .hero-orbit {
-        top: 67%;
-        right: -180px;
+        top: 68%;
+        right: -185px;
         width: 430px;
-        opacity: .55;
+        opacity: .5;
         transform: translateY(-50%) scale(.8);
       }
 
@@ -656,12 +994,24 @@
       }
 
       .scroll-hint {
-        margin-top: 55px;
-        font-size: 9px;
+        margin-top: 54px;
+        font-size: 8px;
+        letter-spacing: .23em;
       }
 
       .slide.active .scroll-hint {
         transition-delay: 1.5s;
+      }
+
+      .slide-line {
+        left: 25px;
+        bottom: 35px;
+        width: 45px;
+      }
+
+      .slide-number {
+        right: 25px;
+        bottom: 35px;
       }
 
       .large-index {
@@ -670,18 +1020,21 @@
         font-size: 70vw;
       }
 
-      .photo-frame {
-        width: min(390px, 82vw);
+      .system-card {
+        display: none;
       }
 
-      .slide-number {
-        right: 25px;
-        bottom: 35px;
+      .photo-frame {
+        width: min(390px, 82vw);
       }
 
       .footer-note {
         bottom: 20px;
         font-size: 7px;
+      }
+
+      .modal-box {
+        padding: 48px 26px 38px;
       }
     }
 
@@ -712,22 +1065,65 @@
   </style>
 </head>
 
-<body>
+<body class="loading">
+
+  <!-- LOADING SCREEN -->
+  <div class="loader" id="loader">
+    <div class="loader-inner">
+      <div class="loader-top">
+        <span>ZeZo System</span>
+        <span>Beta Build</span>
+      </div>
+
+      <div class="loader-logo">
+        Z<span>eZo</span>
+      </div>
+
+      <div class="loader-status" id="loaderStatus">
+        Initializing experience...
+      </div>
+
+      <div class="loader-track">
+        <div class="loader-progress" id="loaderProgress"></div>
+      </div>
+
+      <div class="loader-bottom">
+        <span>Monochrome Interface</span>
+        <span id="loaderPercent">00%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISUAL EFFECTS -->
+  <div class="grid-background"></div>
+  <div class="scanlines"></div>
   <div class="noise"></div>
 
-  <header class="top-bar">
-    <div class="brand">ZeZo / Beta</div>
+  <!-- CUSTOM CURSOR -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">Z</span>
+      <span>ZeZo</span>
+      <span class="version">Beta</span>
+    </div>
+
     <div class="counter" id="counter">01 — 03</div>
   </header>
 
+  <!-- SIDE NAVIGATION -->
   <div class="side-line"></div>
 
   <nav class="progress" aria-label="Navigasi slide">
-    <span class="active" data-index="0"></span>
-    <span data-index="1"></span>
-    <span data-index="2"></span>
+    <span class="progress-item active" data-index="0" data-label="INTRO"></span>
+    <span class="progress-item" data-index="1" data-label="ABOUT"></span>
+    <span class="progress-item" data-index="2" data-label="ACCESS"></span>
   </nav>
 
+  <!-- MAIN SLIDES -->
   <main class="slides" id="slides">
 
     <!-- SLIDE 1 -->
@@ -755,12 +1151,20 @@
         </div>
       </div>
 
+      <div class="slide-line"></div>
       <div class="slide-number">01 / 03</div>
     </section>
 
     <!-- SLIDE 2 -->
     <section class="slide slide-two">
       <div class="large-index">02</div>
+
+      <div class="system-card">
+        <div>System: ZeZo</div>
+        <div>Status: Testing</div>
+        <div>Build: Beta</div>
+        <div>Access: Limited</div>
+      </div>
 
       <div class="slide-content">
         <div class="eyebrow">About / ZeZo</div>
@@ -781,6 +1185,7 @@
         </div>
       </div>
 
+      <div class="slide-line"></div>
       <div class="slide-number">02 / 03</div>
     </section>
 
@@ -795,6 +1200,8 @@
             alt="ZeZo App artwork"
             loading="lazy"
           >
+
+          <span class="image-label">IMAGE / 003</span>
         </div>
 
         <div class="app-name">ZeZo App</div>
@@ -808,12 +1215,13 @@
         Beta testing version / ZeZo System
       </div>
 
+      <div class="slide-line"></div>
       <div class="slide-number">03 / 03</div>
     </section>
 
   </main>
 
-  <!-- POPUP YANG MUNCUL SAAT LOG IN DITEKAN -->
+  <!-- POPUP MAINTENANCE -->
   <div
     class="modal"
     id="maintenanceModal"
@@ -844,36 +1252,99 @@
   </div>
 
   <script>
+    const body = document.body;
+
+    const loader = document.getElementById("loader");
+    const loaderProgress = document.getElementById("loaderProgress");
+    const loaderPercent = document.getElementById("loaderPercent");
+    const loaderStatus = document.getElementById("loaderStatus");
+
     const slidesContainer = document.getElementById("slides");
     const slideElements = document.querySelectorAll(".slide");
-    const progressDots = document.querySelectorAll(".progress span");
+    const progressItems = document.querySelectorAll(".progress-item");
     const counter = document.getElementById("counter");
 
     const modal = document.getElementById("maintenanceModal");
     const loginButton = document.getElementById("loginButton");
     const closeButton = document.getElementById("closeButton");
 
+    const cursorDot = document.getElementById("cursorDot");
+    const cursorRing = document.getElementById("cursorRing");
+
     let currentSlide = 0;
     let wheelLocked = false;
     let wheelTimeout;
 
+    /*
+      LOADING SCREEN
+    */
+    const loadingMessages = [
+      "Initializing experience...",
+      "Loading monochrome interface...",
+      "Preparing ZeZo system...",
+      "Checking beta environment...",
+      "System ready..."
+    ];
+
+    let loadingValue = 0;
+    let messageIndex = 0;
+
+    const loadingInterval = setInterval(() => {
+      loadingValue += Math.floor(Math.random() * 7) + 3;
+
+      if (loadingValue >= 100) {
+        loadingValue = 100;
+        clearInterval(loadingInterval);
+      }
+
+      loaderProgress.style.width = `${loadingValue}%`;
+      loaderPercent.textContent = `${String(loadingValue).padStart(2, "0")}%`;
+
+      if (
+        loadingValue > messageIndex * 20 &&
+        messageIndex < loadingMessages.length
+      ) {
+        loaderStatus.textContent = loadingMessages[messageIndex];
+        messageIndex++;
+      }
+
+      if (loadingValue >= 100) {
+        setTimeout(() => {
+          loader.classList.add("hide");
+          body.classList.remove("loading");
+        }, 650);
+      }
+    }, 115);
+
+    /*
+      UPDATE SLIDE
+    */
     function updateSlide(index) {
       currentSlide = Math.max(
         0,
         Math.min(index, slideElements.length - 1)
       );
 
-      slideElements.forEach((slide, i) => {
-        slide.classList.toggle("active", i === currentSlide);
+      slideElements.forEach((slide, slideIndex) => {
+        slide.classList.toggle(
+          "active",
+          slideIndex === currentSlide
+        );
       });
 
-      progressDots.forEach((dot, i) => {
-        dot.classList.toggle("active", i === currentSlide);
+      progressItems.forEach((item, itemIndex) => {
+        item.classList.toggle(
+          "active",
+          itemIndex === currentSlide
+        );
       });
 
       counter.textContent = `0${currentSlide + 1} — 03`;
     }
 
+    /*
+      OBSERVER SLIDE
+    */
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -899,7 +1370,11 @@
       observer.observe(slide);
     });
 
-    // Smooth scroll untuk laptop
+    /*
+      SCROLL LAPTOP
+      Laptop menggunakan satu scroll untuk satu slide.
+      HP tetap menggunakan swipe natural.
+    */
     slidesContainer.addEventListener(
       "wheel",
       (event) => {
@@ -934,9 +1409,11 @@
       { passive: false }
     );
 
-    // Navigasi melalui indikator slide
-    progressDots.forEach((dot, index) => {
-      dot.addEventListener("click", () => {
+    /*
+      PROGRESS NAVIGATION
+    */
+    progressItems.forEach((item, index) => {
+      item.addEventListener("click", () => {
         slideElements[index].scrollIntoView({
           behavior: "smooth",
           block: "start"
@@ -944,34 +1421,33 @@
       });
     });
 
-    // Buka popup maintenance
+    /*
+      POPUP MAINTENANCE
+    */
     function openModal() {
       modal.classList.add("show");
-      document.body.classList.add("modal-open");
+      body.classList.add("modal-open");
 
       setTimeout(() => {
         closeButton.focus();
       }, 400);
     }
 
-    // Tutup popup maintenance
     function closeModal() {
       modal.classList.remove("show");
-      document.body.classList.remove("modal-open");
+      body.classList.remove("modal-open");
       loginButton.focus();
     }
 
     loginButton.addEventListener("click", openModal);
     closeButton.addEventListener("click", closeModal);
 
-    // Klik di luar popup untuk menutup
     modal.addEventListener("click", (event) => {
       if (event.target === modal) {
         closeModal();
       }
     });
 
-    // Tombol Escape untuk menutup popup
     document.addEventListener("keydown", (event) => {
       if (
         event.key === "Escape" &&
@@ -980,6 +1456,53 @@
         closeModal();
       }
     });
+
+    /*
+      CUSTOM CURSOR LAPTOP
+    */
+    if (window.matchMedia("(min-width: 701px)").matches) {
+      body.classList.add("cursor-ready");
+
+      let ringX = 0;
+      let ringY = 0;
+      let mouseX = 0;
+      let mouseY = 0;
+
+      window.addEventListener("mousemove", (event) => {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+
+        cursorDot.style.left = `${mouseX}px`;
+        cursorDot.style.top = `${mouseY}px`;
+      });
+
+      function animateCursor() {
+        ringX += (mouseX - ringX) * 0.14;
+        ringY += (mouseY - ringY) * 0.14;
+
+        cursorRing.style.left = `${ringX}px`;
+        cursorRing.style.top = `${ringY}px`;
+
+        requestAnimationFrame(animateCursor);
+      }
+
+      animateCursor();
+
+      const hoverElements = document.querySelectorAll(
+        "button, .progress-item, .photo-frame, .brand-mark"
+      );
+
+      hoverElements.forEach((element) => {
+        element.addEventListener("mouseenter", () => {
+          body.classList.add("cursor-hover");
+        });
+
+        element.addEventListener("mouseleave", () => {
+          body.classList.remove("cursor-hover");
+        });
+      });
+    }
   </script>
 </body>
 </html>
+```

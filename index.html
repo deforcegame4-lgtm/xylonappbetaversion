@@ -16,6 +16,7 @@
   --white:#f5f5f5;
   --gray:#999;
   --line:rgba(255,255,255,.2);
+  --soft:rgba(255,255,255,.08);
   --ease:cubic-bezier(.16,1,.3,1);
 }
 
@@ -42,8 +43,13 @@ body.modal-open{
   overflow:hidden;
 }
 
-button{
+button,
+input{
   font-family:inherit;
+}
+
+button{
+  cursor:pointer;
 }
 
 body:before{
@@ -84,7 +90,7 @@ body:after{
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
 }
 
-/* Loading */
+/* LOADING */
 .loader{
   position:fixed;
   inset:0;
@@ -150,7 +156,7 @@ body:after{
   transition:width .3s;
 }
 
-/* Cursor laptop */
+/* CURSOR */
 .cursor-dot,
 .cursor-ring{
   position:fixed;
@@ -171,11 +177,7 @@ body:after{
   width:32px;
   height:32px;
   border:1px solid #aaa;
-  transition:
-    width .35s var(--ease),
-    height .35s var(--ease),
-    background .35s,
-    border-color .35s;
+  transition:.35s var(--ease);
 }
 
 .cursor-ready .cursor-dot,
@@ -190,7 +192,7 @@ body:after{
   background:rgba(255,255,255,.1);
 }
 
-/* Header */
+/* HEADER */
 .topbar{
   position:fixed;
   top:0;
@@ -222,7 +224,6 @@ body:after{
   border:1px solid #fff;
   border-radius:50%;
   font-size:9px;
-  letter-spacing:0;
 }
 
 .version,
@@ -261,7 +262,6 @@ body:after{
   place-items:center;
   width:9px;
   height:9px;
-  cursor:pointer;
 }
 
 .progress-item:before{
@@ -298,7 +298,7 @@ body:after{
   box-shadow:0 0 20px #fff;
 }
 
-/* Slides */
+/* SLIDES */
 .slides{
   height:100dvh;
   min-height:100svh;
@@ -307,7 +307,6 @@ body:after{
   scroll-snap-type:y mandatory;
   overscroll-behavior-y:contain;
   -webkit-overflow-scrolling:touch;
-  touch-action:pan-y;
 }
 
 .slide{
@@ -328,7 +327,6 @@ body:after{
   position:absolute;
   inset:-12%;
   z-index:-1;
-  pointer-events:none;
   opacity:0;
   transform:scale(1.12);
   transition:opacity 1.3s,transform 1.8s var(--ease);
@@ -340,37 +338,21 @@ body:after{
 }
 
 .slide-one:before{
-  background:radial-gradient(
-    circle at 80% 47%,
-    rgba(255,255,255,.1),
-    transparent 27%
-  );
+  background:radial-gradient(circle at 80% 47%,rgba(255,255,255,.1),transparent 27%);
 }
 
 .slide-two:before{
-  background:radial-gradient(
-    circle at 78% 50%,
-    rgba(255,255,255,.1),
-    transparent 28%
-  );
+  background:radial-gradient(circle at 78% 50%,rgba(255,255,255,.1),transparent 28%);
 }
 
 .slide-three:before{
-  background:radial-gradient(
-    circle at 50% 42%,
-    rgba(255,255,255,.09),
-    transparent 34%
-  );
+  background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.09),transparent 34%);
 }
 
-/* Laptop tidak blur */
 .slide-content{
   position:relative;
   z-index:6;
   width:min(950px,100%);
-  opacity:1;
-  transform:none;
-  filter:none;
 }
 
 .eyebrow{
@@ -485,7 +467,7 @@ h2{
   opacity:.35;
 }
 
-/* Orbit */
+/* ORBIT */
 .hero-orbit{
   position:absolute;
   top:50%;
@@ -531,7 +513,7 @@ h2{
   to{rotate:360deg}
 }
 
-/* Slide 2 */
+/* ABOUT */
 .large-index{
   position:absolute;
   right:4vw;
@@ -566,7 +548,7 @@ h2{
   background:linear-gradient(to right,#fff 40%,transparent 40%);
 }
 
-/* Slide 3 */
+/* LOGIN SLIDE */
 .slide-three{
   justify-content:center;
   text-align:center;
@@ -585,40 +567,14 @@ h2{
   padding:9px;
   border:1px solid rgba(255,255,255,.55);
   background:#090909;
-  box-shadow:
-    16px 16px 0 rgba(255,255,255,.08),
-    0 0 65px rgba(255,255,255,.08);
+  box-shadow:16px 16px 0 rgba(255,255,255,.08),0 0 65px rgba(255,255,255,.08);
   transform:rotate(-1.3deg);
   transition:.7s var(--ease);
 }
 
 .photo-frame:hover{
   transform:rotate(0) scale(1.025);
-  box-shadow:
-    20px 20px 0 rgba(255,255,255,.1),
-    0 0 95px rgba(255,255,255,.14);
-}
-
-.photo-frame:before,
-.photo-frame:after{
-  content:"";
-  position:absolute;
-  width:24px;
-  height:24px;
-  border-color:#fff;
-  border-style:solid;
-}
-
-.photo-frame:before{
-  top:-7px;
-  left:-7px;
-  border-width:1px 0 0 1px;
-}
-
-.photo-frame:after{
-  right:-7px;
-  bottom:-7px;
-  border-width:0 1px 1px 0;
+  box-shadow:20px 20px 0 rgba(255,255,255,.1),0 0 95px rgba(255,255,255,.14);
 }
 
 .photo-frame img{
@@ -656,7 +612,6 @@ h2{
   border:1px solid #fff;
   background:#fff;
   color:#050505;
-  cursor:pointer;
   font-size:10px;
   font-weight:700;
   letter-spacing:.25em;
@@ -696,7 +651,7 @@ h2{
   text-transform:uppercase;
 }
 
-/* Popup */
+/* MODAL LOGIN */
 .modal{
   position:fixed;
   inset:0;
@@ -704,7 +659,7 @@ h2{
   display:grid;
   place-items:center;
   padding:24px;
-  background:rgba(0,0,0,.8);
+  background:rgba(0,0,0,.82);
   backdrop-filter:blur(15px);
   opacity:0;
   visibility:hidden;
@@ -716,50 +671,64 @@ h2{
   visibility:visible;
 }
 
-.modal-box{
+.login-modal-box{
   position:relative;
-  width:min(430px,100%);
-  padding:50px 32px 38px;
-  border:1px solid rgba(255,255,255,.58);
+  width:min(470px,100%);
+  padding:48px 34px 34px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.55);
   background:
-    linear-gradient(135deg,rgba(255,255,255,.09),transparent 35%),
+    radial-gradient(circle at 50% -20%,rgba(255,255,255,.16),transparent 42%),
+    linear-gradient(135deg,rgba(255,255,255,.08),transparent 38%),
     #080808;
-  box-shadow:
-    0 25px 100px rgba(0,0,0,.9),
-    0 0 50px rgba(255,255,255,.04);
-  text-align:center;
-  transform:translateY(35px) scale(.93);
-  transition:transform .65s var(--ease);
+  box-shadow:0 25px 100px rgba(0,0,0,.95),0 0 80px rgba(255,255,255,.09);
+  text-align:left;
+  transform:translateY(35px) scale(.9) rotateX(8deg);
+  transition:transform .7s var(--ease);
 }
 
-.modal.show .modal-box{
-  transform:translateY(0) scale(1);
+.modal.show .login-modal-box{
+  transform:translateY(0) scale(1) rotateX(0);
 }
 
-.modal-box:before{
-  content:"SYSTEM MESSAGE // BETA";
+.login-modal-box:before{
+  content:"ZEZO SECURE ACCESS // BETA";
   position:absolute;
-  top:16px;
-  left:20px;
+  top:17px;
+  left:22px;
   color:#666;
   font-size:8px;
   letter-spacing:.16em;
 }
 
-.modal-box:after{
-  content:"ZZ-503";
+.login-modal-box:after{
+  content:"AUTH-001";
   position:absolute;
-  right:20px;
-  bottom:17px;
+  right:22px;
+  bottom:18px;
   color:#444;
   font-size:8px;
-  letter-spacing:.16em;
+  letter-spacing:.15em;
+}
+
+.login-glow{
+  position:absolute;
+  top:-120px;
+  left:50%;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  background:rgba(255,255,255,.1);
+  filter:blur(70px);
+  transform:translateX(-50%);
+  pointer-events:none;
 }
 
 .close-btn{
   position:absolute;
   top:13px;
   right:17px;
+  z-index:2;
   display:grid;
   place-items:center;
   width:29px;
@@ -768,9 +737,7 @@ h2{
   border-radius:50%;
   background:transparent;
   color:#fff;
-  cursor:pointer;
   font-size:18px;
-  line-height:1;
   transition:.35s;
 }
 
@@ -780,43 +747,246 @@ h2{
   transform:rotate(90deg);
 }
 
-.modal-icon{
+.login-header{
   position:relative;
+  z-index:1;
+  margin-bottom:30px;
+  text-align:center;
+}
+
+.login-symbol{
   display:grid;
   place-items:center;
-  width:52px;
-  height:52px;
-  margin:0 auto 25px;
+  width:58px;
+  height:58px;
+  margin:0 auto 20px;
   border:1px solid #fff;
   border-radius:50%;
-  font-size:19px;
-  box-shadow:0 0 30px rgba(255,255,255,.16);
+  color:#fff;
+  font-size:22px;
+  box-shadow:0 0 18px rgba(255,255,255,.4);
+  animation:loginPulse 2.2s infinite;
 }
 
-.modal-icon:before,
-.modal-icon:after{
+@keyframes loginPulse{
+  0%,100%{box-shadow:0 0 18px rgba(255,255,255,.3)}
+  50%{box-shadow:0 0 38px rgba(255,255,255,.65)}
+}
+
+.login-heading{
+  font-size:29px;
+  font-weight:600;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.login-subheading{
+  margin-top:9px;
+  color:#777;
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+
+.login-field{
+  position:relative;
+  margin-bottom:19px;
+}
+
+.login-field label{
+  display:block;
+  margin-bottom:8px;
+  color:#888;
+  font-size:9px;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+}
+
+.login-field input{
+  width:100%;
+  padding:16px 15px;
+  outline:none;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(0,0,0,.55);
+  color:#fff;
+  font-size:12px;
+  transition:.35s var(--ease);
+}
+
+.login-field input::placeholder{
+  color:#4e4e4e;
+}
+
+.login-field input:focus{
+  border-color:#fff;
+  background:rgba(255,255,255,.06);
+  box-shadow:0 0 0 1px rgba(255,255,255,.2),0 0 22px rgba(255,255,255,.09);
+}
+
+.password-wrapper{
+  position:relative;
+}
+
+.password-wrapper input{
+  padding-right:48px;
+}
+
+.password-toggle{
+  position:absolute;
+  top:50%;
+  right:13px;
+  border:0;
+  background:transparent;
+  color:#777;
+  font-size:12px;
+  transform:translateY(-50%);
+}
+
+.password-toggle:hover{
+  color:#fff;
+}
+
+.login-submit{
+  position:relative;
+  width:100%;
+  padding:17px;
+  overflow:hidden;
+  border:1px solid #fff;
+  background:#fff;
+  color:#000;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+  transition:.4s var(--ease);
+}
+
+.login-submit:before{
   content:"";
   position:absolute;
-  border:1px solid rgba(255,255,255,.3);
-  border-radius:50%;
+  inset:0;
+  background:#000;
+  transform:translateX(-101%);
+  transition:.5s var(--ease);
 }
 
-.modal-icon:before{inset:-8px}
-.modal-icon:after{inset:-16px;opacity:.45}
-
-.modal-title{
-  margin-bottom:11px;
-  font-size:23px;
-  letter-spacing:-.04em;
+.login-submit span{
+  position:relative;
+  z-index:1;
 }
 
-.modal-text{
+.login-submit:hover{
+  color:#fff;
+  box-shadow:0 0 35px rgba(255,255,255,.25);
+}
+
+.login-submit:hover:before{
+  transform:translateX(0);
+}
+
+.login-submit.loading{
+  pointer-events:none;
   color:#aaa;
-  font-size:14px;
-  line-height:1.7;
 }
 
-/* HP */
+.login-submit.loading:after{
+  content:"";
+  position:absolute;
+  top:50%;
+  right:18px;
+  width:13px;
+  height:13px;
+  border:1px solid #777;
+  border-top-color:#000;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  transform:translateY(-50%);
+}
+
+@keyframes spin{
+  to{transform:translateY(-50%) rotate(360deg)}
+}
+
+/* NOTIFICATION ATAS */
+.zezo-notification{
+  position:fixed;
+  top:25px;
+  left:50%;
+  z-index:700;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  width:min(420px,calc(100% - 35px));
+  padding:16px 19px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.38);
+  background:linear-gradient(120deg,rgba(255,255,255,.13),rgba(255,255,255,.03)),rgba(7,7,7,.9);
+  box-shadow:0 18px 70px rgba(0,0,0,.75),0 0 35px rgba(255,255,255,.08);
+  backdrop-filter:blur(20px);
+  opacity:0;
+  pointer-events:none;
+  transform:translate(-50%,-30px) scale(.94);
+  transition:.65s var(--ease);
+}
+
+.zezo-notification.show{
+  opacity:1;
+  pointer-events:auto;
+  transform:translate(-50%,0) scale(1);
+}
+
+.zezo-notification.error{
+  border-color:rgba(255,80,80,.75);
+}
+
+.notification-icon{
+  display:grid;
+  flex:0 0 auto;
+  place-items:center;
+  width:31px;
+  height:31px;
+  border:1px solid #fff;
+  border-radius:50%;
+  color:#fff;
+  font-size:14px;
+}
+
+.zezo-notification.error .notification-icon{
+  border-color:#ff6666;
+  color:#ff6666;
+}
+
+.notification-content{
+  min-width:0;
+}
+
+.notification-label{
+  margin-bottom:5px;
+  color:#777;
+  font-size:8px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+
+.notification-message{
+  color:#fff;
+  font-size:12px;
+  line-height:1.4;
+}
+
+.notification-close{
+  margin-left:auto;
+  border:0;
+  background:transparent;
+  color:#777;
+  font-size:17px;
+}
+
+.notification-close:hover{
+  color:#fff;
+}
+
+/* MOBILE */
 @media(max-width:700px){
   body{
     cursor:auto;
@@ -835,11 +1005,6 @@ h2{
     font-size:10px;
   }
 
-  .brand-mark{
-    width:22px;
-    height:22px;
-  }
-
   .version{
     display:none;
   }
@@ -849,26 +1014,17 @@ h2{
     right:18px;
   }
 
-  .slides{
-    height:100svh;
-    min-height:100svh;
-  }
-
   .slide{
     height:100svh;
     min-height:100svh;
     padding:90px 25px 60px;
   }
 
-  /* Blur tetap hanya untuk HP */
   .slide-content{
     opacity:.25;
     transform:translateY(30px) scale(.985);
     filter:blur(3px);
-    transition:
-      opacity 1s var(--ease),
-      transform 1.1s var(--ease),
-      filter 1s var(--ease);
+    transition:opacity 1s var(--ease),transform 1.1s var(--ease),filter 1s var(--ease);
   }
 
   .slide.active .slide-content{
@@ -900,17 +1056,6 @@ h2{
     transition-delay:1.5s;
   }
 
-  .slide-line{
-    left:25px;
-    bottom:35px;
-    width:45px;
-  }
-
-  .slide-number{
-    right:25px;
-    bottom:35px;
-  }
-
   .large-index{
     right:-10px;
     bottom:10vh;
@@ -930,39 +1075,22 @@ h2{
     font-size:7px;
   }
 
-  .modal-box{
-    padding:48px 26px 38px;
-  }
-}
-
-@media(prefers-reduced-motion:reduce){
-  html,
-  .slides{
-    scroll-behavior:auto;
+  .login-modal-box{
+    padding:46px 24px 32px;
   }
 
-  .hero-orbit,
-  .arrow{
-    animation:none;
+  .login-heading{
+    font-size:24px;
   }
 
-  .slide-content{
-    opacity:1!important;
-    transform:none!important;
-    filter:none!important;
-    transition:none!important;
-  }
-
-  .slide:before{
-    opacity:1;
-    transform:none;
-    transition:none;
+  .zezo-notification{
+    top:16px;
   }
 }
 </style>
 </head>
 
-<body class="loading">
+<body>
 
 <div class="loader" id="loader">
   <div class="loader-inner">
@@ -1009,7 +1137,7 @@ h2{
 
 <div class="side-line"></div>
 
-<nav class="progress" aria-label="Navigasi slide">
+<nav class="progress">
   <span class="progress-item active" data-index="0" data-label="INTRO"></span>
   <span class="progress-item" data-index="1" data-label="ABOUT"></span>
   <span class="progress-item" data-index="2" data-label="ACCESS"></span>
@@ -1017,165 +1145,293 @@ h2{
 
 <main class="slides" id="slides">
 
-  <section class="slide slide-one active">
-    <div class="hero-orbit">
-      <div class="orbit-dot"></div>
+<section class="slide slide-one active">
+  <div class="hero-orbit">
+    <div class="orbit-dot"></div>
+  </div>
+
+  <div class="slide-content">
+    <div class="eyebrow">Beta / Introduction</div>
+
+    <h1>
+      Welcome To<br>
+      <span class="outline">ZeZo App</span>
+    </h1>
+
+    <p class="description">
+      A monochrome experience designed for
+      <strong>testing, exploring,</strong>
+      and discovering something new.
+    </p>
+
+    <div class="scroll-hint">
+      <span class="arrow"></span>
+      <span>Slide To Down</span>
+    </div>
+  </div>
+
+  <div class="slide-line"></div>
+  <div class="slide-number">01 / 03</div>
+</section>
+
+<section class="slide slide-two">
+  <div class="large-index">02</div>
+
+  <div class="system-card">
+    <div>System: ZeZo</div>
+    <div>Status: Testing</div>
+    <div>Build: Beta</div>
+    <div>Access: Limited</div>
+  </div>
+
+  <div class="slide-content">
+    <div class="eyebrow">About / ZeZo</div>
+
+    <h2>
+      Built By<br>
+      <span class="outline">Xylon.</span>
+    </h2>
+
+    <p class="description">
+      This App Has Created By Xylon.<br>
+      This App Only For Testing Application Only.
+    </p>
+
+    <div class="scroll-hint">
+      <span class="arrow"></span>
+      <span>Slide To Down</span>
+    </div>
+  </div>
+
+  <div class="slide-line"></div>
+  <div class="slide-number">02 / 03</div>
+</section>
+
+<section class="slide slide-three">
+  <div class="slide-content">
+    <div class="eyebrow">Beta Access / ZeZo</div>
+
+    <div class="photo-frame">
+      <img
+        src="https://files.catbox.moe/nh4s1u.jpg"
+        alt="ZeZo App artwork"
+      >
+
+      <span class="image-label">
+        IMAGE / 003
+      </span>
     </div>
 
-    <div class="slide-content">
-      <div class="eyebrow">
-        Beta / Introduction
-      </div>
-
-      <h1>
-        Welcome To<br>
-        <span class="outline">ZeZo App</span>
-      </h1>
-
-      <p class="description">
-        A monochrome experience designed for
-        <strong>testing, exploring,</strong>
-        and discovering something new.
-      </p>
-
-      <div class="scroll-hint">
-        <span class="arrow"></span>
-        <span>Slide To Down</span>
-      </div>
+    <div class="app-name">
+      ZeZo App
     </div>
 
-    <div class="slide-line"></div>
-    <div class="slide-number">01 / 03</div>
-  </section>
+    <button class="login-btn" id="loginButton" type="button">
+      <span>Log In</span>
+    </button>
+  </div>
 
-  <section class="slide slide-two">
-    <div class="large-index">
-      02
-    </div>
+  <div class="footer-note">
+    Beta testing version / ZeZo System
+  </div>
 
-    <div class="system-card">
-      <div>System: ZeZo</div>
-      <div>Status: Testing</div>
-      <div>Build: Beta</div>
-      <div>Access: Limited</div>
-    </div>
-
-    <div class="slide-content">
-      <div class="eyebrow">
-        About / ZeZo
-      </div>
-
-      <h2>
-        Built By<br>
-        <span class="outline">Xylon.</span>
-      </h2>
-
-      <p class="description">
-        This App Has Created By Xylon.<br>
-        This App Only For Testing Application Only.
-      </p>
-
-      <div class="scroll-hint">
-        <span class="arrow"></span>
-        <span>Slide To Down</span>
-      </div>
-    </div>
-
-    <div class="slide-line"></div>
-    <div class="slide-number">02 / 03</div>
-  </section>
-
-  <section class="slide slide-three">
-    <div class="slide-content">
-      <div class="eyebrow">
-        Beta Access / ZeZo
-      </div>
-
-      <div class="photo-frame">
-        <img
-          src="https://files.catbox.moe/nh4s1u.jpg"
-          alt="ZeZo App artwork"
-          loading="lazy"
-        >
-
-        <span class="image-label">
-          IMAGE / 003
-        </span>
-      </div>
-
-      <div class="app-name">
-        ZeZo App
-      </div>
-
-      <button class="login-btn" id="loginButton" type="button">
-        <span>Log In</span>
-      </button>
-    </div>
-
-    <div class="footer-note">
-      Beta testing version / ZeZo System
-    </div>
-
-    <div class="slide-line"></div>
-    <div class="slide-number">03 / 03</div>
-  </section>
+  <div class="slide-line"></div>
+  <div class="slide-number">03 / 03</div>
+</section>
 
 </main>
 
+<!-- LOGIN MODAL -->
 <div
   class="modal"
   id="maintenanceModal"
   role="dialog"
   aria-modal="true"
-  aria-labelledby="modalTitle"
+  aria-labelledby="loginTitle"
 >
-  <div class="modal-box">
+  <div class="login-modal-box">
+    <div class="login-glow"></div>
+
     <button
       class="close-btn"
       id="closeButton"
       type="button"
-      aria-label="Tutup popup"
+      aria-label="Tutup login"
     >
       ×
     </button>
 
-    <div class="modal-icon">
-      !
+    <div class="login-header">
+      <div class="login-symbol">Z</div>
+
+      <h2 class="login-heading" id="loginTitle">
+        ZeZo Login
+      </h2>
+
+      <p class="login-subheading">
+        Secure beta access
+      </p>
     </div>
 
-    <h2 class="modal-title" id="modalTitle">
-      ZeZo Speak
-    </h2>
+    <form class="login-form" id="loginForm">
 
-    <p class="modal-text">
-      On Maintenance Bro
-    </p>
+      <div class="login-field">
+        <label for="loginUsername">
+          Username
+        </label>
+
+        <input
+          id="loginUsername"
+          type="text"
+          autocomplete="username"
+          placeholder="Masukan Username"
+          required
+        >
+      </div>
+
+      <div class="login-field">
+        <label for="loginPassword">
+          Password
+        </label>
+
+        <div class="password-wrapper">
+          <input
+            id="loginPassword"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Masukan Password"
+            required
+          >
+
+          <button
+            class="password-toggle"
+            id="passwordToggle"
+            type="button"
+          >
+            ◉
+          </button>
+        </div>
+      </div>
+
+      <button
+        class="login-submit"
+        id="loginSubmit"
+        type="submit"
+      >
+        <span>LOGIN</span>
+      </button>
+
+    </form>
   </div>
 </div>
 
+<!-- NOTIFICATION DI ATAS -->
+<div
+  class="zezo-notification"
+  id="zezoNotification"
+  role="status"
+  aria-live="polite"
+>
+  <div class="notification-icon" id="notificationIcon">
+    ✓
+  </div>
+
+  <div class="notification-content">
+    <div class="notification-label" id="notificationLabel">
+      SYSTEM MESSAGE
+    </div>
+
+    <div class="notification-message" id="notificationMessage">
+      Notification
+    </div>
+  </div>
+
+  <button
+    class="notification-close"
+    id="notificationClose"
+    type="button"
+  >
+    ×
+  </button>
+</div>
+
 <script>
-const body = document.body;
+const body =
+  document.body;
 
-const loader = document.getElementById("loader");
-const loaderProgress = document.getElementById("loaderProgress");
-const loaderPercent = document.getElementById("loaderPercent");
-const loaderStatus = document.getElementById("loaderStatus");
+const loader =
+  document.getElementById("loader");
 
-const slidesContainer = document.getElementById("slides");
-const slideElements = document.querySelectorAll(".slide");
-const progressItems = document.querySelectorAll(".progress-item");
-const counter = document.getElementById("counter");
+const loaderProgress =
+  document.getElementById("loaderProgress");
 
-const modal = document.getElementById("maintenanceModal");
-const loginButton = document.getElementById("loginButton");
-const closeButton = document.getElementById("closeButton");
+const loaderPercent =
+  document.getElementById("loaderPercent");
 
-const cursorDot = document.getElementById("cursorDot");
-const cursorRing = document.getElementById("cursorRing");
+const loaderStatus =
+  document.getElementById("loaderStatus");
+
+const slidesContainer =
+  document.getElementById("slides");
+
+const slideElements =
+  document.querySelectorAll(".slide");
+
+const progressItems =
+  document.querySelectorAll(".progress-item");
+
+const counter =
+  document.getElementById("counter");
+
+const modal =
+  document.getElementById("maintenanceModal");
+
+const loginButton =
+  document.getElementById("loginButton");
+
+const closeButton =
+  document.getElementById("closeButton");
+
+const loginForm =
+  document.getElementById("loginForm");
+
+const loginUsername =
+  document.getElementById("loginUsername");
+
+const loginPassword =
+  document.getElementById("loginPassword");
+
+const loginSubmit =
+  document.getElementById("loginSubmit");
+
+const passwordToggle =
+  document.getElementById("passwordToggle");
+
+const notification =
+  document.getElementById("zezoNotification");
+
+const notificationIcon =
+  document.getElementById("notificationIcon");
+
+const notificationLabel =
+  document.getElementById("notificationLabel");
+
+const notificationMessage =
+  document.getElementById("notificationMessage");
+
+const notificationClose =
+  document.getElementById("notificationClose");
+
+const cursorDot =
+  document.getElementById("cursorDot");
+
+const cursorRing =
+  document.getElementById("cursorRing");
 
 let currentSlide = 0;
 let wheelLocked = false;
-let wheelTimeout;
+let wheelTimer;
+let notificationTimer;
 
 let loadingValue = 0;
 let messageIndex = 0;
@@ -1191,43 +1447,52 @@ const loadingMessages = [
 const loadingInterval = setInterval(() => {
   loadingValue += Math.floor(Math.random() * 7) + 3;
 
-  if (loadingValue >= 100) {
+  if(loadingValue >= 100){
     loadingValue = 100;
     clearInterval(loadingInterval);
   }
 
-  loaderProgress.style.width = loadingValue + "%";
-  loaderPercent.textContent =
-    String(loadingValue).padStart(2, "0") + "%";
+  loaderProgress.style.width =
+    loadingValue + "%";
 
-  if (
+  loaderPercent.textContent =
+    String(loadingValue).padStart(2,"0") + "%";
+
+  if(
     loadingValue > messageIndex * 20 &&
     messageIndex < loadingMessages.length
-  ) {
-    loaderStatus.textContent = loadingMessages[messageIndex];
+  ){
+    loaderStatus.textContent =
+      loadingMessages[messageIndex];
+
     messageIndex++;
   }
 
-  if (loadingValue >= 100) {
+  if(loadingValue >= 100){
     setTimeout(() => {
       loader.classList.add("hide");
-      body.classList.remove("loading");
-    }, 650);
+    },650);
   }
-}, 115);
+},115);
 
-function updateSlide(index) {
+function updateSlide(index){
   currentSlide = Math.max(
     0,
-    Math.min(index, slideElements.length - 1)
+    Math.min(index,slideElements.length - 1)
   );
 
-  slideElements.forEach((slide, i) => {
-    slide.classList.toggle("active", i === currentSlide);
+  slideElements.forEach((slide,i) => {
+    slide.classList.toggle(
+      "active",
+      i === currentSlide
+    );
   });
 
-  progressItems.forEach((item, i) => {
-    item.classList.toggle("active", i === currentSlide);
+  progressItems.forEach((item,i) => {
+    item.classList.toggle(
+      "active",
+      i === currentSlide
+    );
   });
 
   counter.textContent =
@@ -1235,107 +1500,246 @@ function updateSlide(index) {
 }
 
 const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (
+  entries => {
+    entries.forEach(entry => {
+      if(
         entry.isIntersecting &&
-        entry.intersectionRatio >= 0.65
-      ) {
-        const index = [...slideElements].indexOf(entry.target);
+        entry.intersectionRatio >= .65
+      ){
+        const index =
+          [...slideElements].indexOf(entry.target);
 
-        if (index !== -1) {
+        if(index !== -1){
           updateSlide(index);
         }
       }
     });
   },
   {
-    root: slidesContainer,
-    threshold: [0.65, 0.8, 1]
+    root:slidesContainer,
+    threshold:[.65,.8,1]
   }
 );
 
-slideElements.forEach((slide) => {
+slideElements.forEach(slide => {
   observer.observe(slide);
 });
 
 slidesContainer.addEventListener(
   "wheel",
-  (event) => {
-    if (window.innerWidth <= 700) return;
-    if (Math.abs(event.deltaY) < 8) return;
+  event => {
+    if(window.innerWidth <= 700){
+      return;
+    }
+
+    if(Math.abs(event.deltaY) < 8){
+      return;
+    }
 
     event.preventDefault();
 
-    if (wheelLocked) return;
+    if(wheelLocked){
+      return;
+    }
 
     wheelLocked = true;
 
-    const direction = event.deltaY > 0 ? 1 : -1;
-    const nextSlide = currentSlide + direction;
+    const direction =
+      event.deltaY > 0 ? 1 : -1;
 
-    if (
-      nextSlide >= 0 &&
-      nextSlide < slideElements.length
-    ) {
-      slideElements[nextSlide].scrollIntoView({
-        behavior: "smooth",
-        block: "start"
+    const next =
+      currentSlide + direction;
+
+    if(
+      next >= 0 &&
+      next < slideElements.length
+    ){
+      slideElements[next].scrollIntoView({
+        behavior:"smooth",
+        block:"start"
       });
     }
 
-    clearTimeout(wheelTimeout);
+    clearTimeout(wheelTimer);
 
-    wheelTimeout = setTimeout(() => {
+    wheelTimer = setTimeout(() => {
       wheelLocked = false;
-    }, 1100);
+    },1100);
   },
-  { passive: false }
+  {passive:false}
 );
 
-progressItems.forEach((item, index) => {
-  item.addEventListener("click", () => {
+progressItems.forEach((item,index) => {
+  item.addEventListener("click",() => {
     slideElements[index].scrollIntoView({
-      behavior: "smooth",
-      block: "start"
+      behavior:"smooth",
+      block:"start"
     });
   });
 });
 
-function openModal() {
+/* LOGIN */
+function openLogin(){
   modal.classList.add("show");
   body.classList.add("modal-open");
 
   setTimeout(() => {
-    closeButton.focus();
-  }, 400);
+    loginUsername.focus();
+  },400);
 }
 
-function closeModal() {
+function closeLogin(){
   modal.classList.remove("show");
   body.classList.remove("modal-open");
+
+  loginForm.reset();
+
+  loginPassword.type =
+    "password";
+
+  passwordToggle.textContent =
+    "◉";
+
   loginButton.focus();
 }
 
-loginButton.addEventListener("click", openModal);
-closeButton.addEventListener("click", closeModal);
+function showNotification(
+  type,
+  message,
+  label
+){
+  clearTimeout(notificationTimer);
 
-modal.addEventListener("click", (event) => {
-  if (event.target === modal) {
-    closeModal();
+  notification.classList.remove(
+    "success",
+    "error"
+  );
+
+  notification.classList.add(
+    type,
+    "show"
+  );
+
+  notificationIcon.textContent =
+    type === "success" ? "✓" : "×";
+
+  notificationLabel.textContent =
+    label ||
+    (
+      type === "success"
+        ? "ACCESS GRANTED"
+        : "ACCESS DENIED"
+    );
+
+  notificationMessage.textContent =
+    message;
+
+  notificationTimer = setTimeout(() => {
+    notification.classList.remove("show");
+  },5000);
+}
+
+loginButton.addEventListener(
+  "click",
+  openLogin
+);
+
+closeButton.addEventListener(
+  "click",
+  closeLogin
+);
+
+modal.addEventListener(
+  "click",
+  event => {
+    if(event.target === modal){
+      closeLogin();
+    }
   }
-});
+);
 
-document.addEventListener("keydown", (event) => {
-  if (
-    event.key === "Escape" &&
-    modal.classList.contains("show")
-  ) {
-    closeModal();
+passwordToggle.addEventListener(
+  "click",
+  () => {
+    const hidden =
+      loginPassword.type === "password";
+
+    loginPassword.type =
+      hidden ? "text" : "password";
+
+    passwordToggle.textContent =
+      hidden ? "◌" : "◉";
   }
-});
+);
 
-if (window.matchMedia("(min-width: 701px)").matches) {
+notificationClose.addEventListener(
+  "click",
+  () => {
+    notification.classList.remove("show");
+  }
+);
+
+loginForm.addEventListener(
+  "submit",
+  async event => {
+    event.preventDefault();
+
+    const username =
+      loginUsername.value.trim();
+
+    const password =
+      loginPassword.value.trim();
+
+    if(!username || !password){
+      showNotification(
+        "error",
+        "Gagal! Ada Kesalahan Di Username/Password",
+        "LOGIN FAILED"
+      );
+
+      return;
+    }
+
+    loginSubmit.classList.add("loading");
+
+    loginSubmit.querySelector("span")
+      .textContent = "CHECKING";
+
+    await new Promise(resolve => {
+      setTimeout(resolve,900);
+    });
+
+    loginSubmit.classList.remove("loading");
+
+    loginSubmit.querySelector("span")
+      .textContent = "LOGIN";
+
+    closeLogin();
+
+    showNotification(
+      "success",
+      `Berhasil! Welcome ${username} To ZezoApp`,
+      "LOGIN SUCCESSFUL"
+    );
+  }
+);
+
+document.addEventListener(
+  "keydown",
+  event => {
+    if(
+      event.key === "Escape" &&
+      modal.classList.contains("show")
+    ){
+      closeLogin();
+    }
+  }
+);
+
+/* CURSOR LAPTOP */
+if(
+  window.matchMedia("(min-width:701px)").matches
+){
   body.classList.add("cursor-ready");
 
   let ringX = 0;
@@ -1343,36 +1747,49 @@ if (window.matchMedia("(min-width: 701px)").matches) {
   let mouseX = 0;
   let mouseY = 0;
 
-  window.addEventListener("mousemove", (event) => {
-    mouseX = event.clientX;
-    mouseY = event.clientY;
+  window.addEventListener(
+    "mousemove",
+    event => {
+      mouseX = event.clientX;
+      mouseY = event.clientY;
 
-    cursorDot.style.left = mouseX + "px";
-    cursorDot.style.top = mouseY + "px";
-  });
+      cursorDot.style.left =
+        mouseX + "px";
 
-  function animateCursor() {
+      cursorDot.style.top =
+        mouseY + "px";
+    }
+  );
+
+  function animateCursor(){
     ringX += (mouseX - ringX) * .14;
     ringY += (mouseY - ringY) * .14;
 
-    cursorRing.style.left = ringX + "px";
-    cursorRing.style.top = ringY + "px";
+    cursorRing.style.left =
+      ringX + "px";
 
-    requestAnimationFrame(animateCursor);
+    cursorRing.style.top =
+      ringY + "px";
+
+    requestAnimationFrame(
+      animateCursor
+    );
   }
 
   animateCursor();
 
   document.querySelectorAll(
     "button,.progress-item,.photo-frame,.brand-mark"
-  ).forEach((element) => {
-    element.addEventListener("mouseenter", () => {
-      body.classList.add("cursor-hover");
-    });
+  ).forEach(element => {
+    element.addEventListener(
+      "mouseenter",
+      () => body.classList.add("cursor-hover")
+    );
 
-    element.addEventListener("mouseleave", () => {
-      body.classList.remove("cursor-hover");
-    });
+    element.addEventListener(
+      "mouseleave",
+      () => body.classList.remove("cursor-hover")
+    );
   });
 }
 </script>

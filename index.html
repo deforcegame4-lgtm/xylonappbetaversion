@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#050505">
-<title>ZeZo Login — Beta</title>
+<title>ZeZo App — Beta</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,11 +13,10 @@
 <style>
 :root{
   --black:#050505;
-  --panel:#090909;
   --white:#f5f5f5;
-  --gray:#888;
-  --line:rgba(255,255,255,.18);
-  --red:#ff6565;
+  --gray:#999;
+  --line:rgba(255,255,255,.2);
+  --soft:rgba(255,255,255,.08);
   --ease:cubic-bezier(.16,1,.3,1);
 }
 
@@ -27,46 +26,21 @@
   padding:0;
 }
 
-html,
-body{
-  min-height:100%;
+html{
+  scroll-behavior:smooth;
 }
 
 body{
-  display:grid;
   min-height:100vh;
-  place-items:center;
   overflow:hidden;
   background:var(--black);
   color:var(--white);
   font-family:"Space Grotesk",Arial,sans-serif;
+  cursor:none;
 }
 
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-2;
-  opacity:.07;
-  background-image:
-    linear-gradient(rgba(255,255,255,.2) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(255,255,255,.2) 1px,transparent 1px);
-  background-size:70px 70px;
-}
-
-body:after{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  opacity:.035;
-  pointer-events:none;
-  background:repeating-linear-gradient(
-    to bottom,
-    transparent 0,
-    transparent 3px,
-    #fff 4px
-  );
+body.modal-open{
+  overflow:hidden;
 }
 
 button,
@@ -78,72 +52,168 @@ button{
   cursor:pointer;
 }
 
-.background-orbit{
-  position:fixed;
-  top:50%;
-  left:50%;
-  width:min(70vw,720px);
-  aspect-ratio:1;
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:50%;
-  box-shadow:
-    0 0 0 45px rgba(255,255,255,.025),
-    0 0 0 95px rgba(255,255,255,.015);
-  transform:translate(-50%,-50%);
-  animation:rotate 28s linear infinite;
-}
-
-.background-orbit:before,
-.background-orbit:after{
+body:before{
   content:"";
-  position:absolute;
-  inset:15%;
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:50%;
-  transform:rotate(55deg) scaleX(.42);
-}
-
-.background-orbit:after{
-  transform:rotate(-55deg) scaleX(.42);
-}
-
-.orbit-light{
-  position:absolute;
-  top:10%;
-  left:46%;
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#fff;
-  box-shadow:0 0 28px 9px rgba(255,255,255,.6);
-}
-
-@keyframes rotate{
-  to{
-    rotate:360deg;
-  }
-}
-
-.topbar{
   position:fixed;
-  top:0;
-  left:0;
-  right:0;
+  inset:0;
+  z-index:10;
+  pointer-events:none;
+  opacity:.08;
+  background-image:
+    linear-gradient(rgba(255,255,255,.15) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.15) 1px,transparent 1px);
+  background-size:70px 70px;
+  mask-image:linear-gradient(to bottom,#000,transparent 85%);
+}
+
+body:after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:11;
+  pointer-events:none;
+  opacity:.035;
+  background:repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    #fff 4px
+  );
+}
+
+.noise{
+  position:fixed;
+  inset:0;
+  z-index:12;
+  pointer-events:none;
+  opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+}
+
+/* LOADING */
+.loader{
+  position:fixed;
+  inset:0;
+  z-index:500;
+  display:grid;
+  place-items:center;
+  background:#050505;
+  transition:opacity .9s var(--ease),visibility .9s var(--ease),transform 1s var(--ease);
+}
+
+.loader.hide{
+  opacity:0;
+  visibility:hidden;
+  transform:scale(1.08);
+}
+
+.loader-inner{
+  width:min(430px,calc(100% - 48px));
+}
+
+.loader-top,
+.loader-bottom{
   display:flex;
   justify-content:space-between;
-  padding:25px clamp(22px,5vw,75px);
-  color:#aaa;
+  color:#666;
   font-size:9px;
   letter-spacing:.2em;
   text-transform:uppercase;
 }
 
+.loader-logo{
+  margin:25px 0;
+  font-size:clamp(55px,12vw,100px);
+  font-weight:600;
+  letter-spacing:-.1em;
+  line-height:.8;
+}
+
+.loader-logo span{
+  color:transparent;
+  -webkit-text-stroke:1px #aaa;
+}
+
+.loader-status{
+  min-height:20px;
+  margin-bottom:14px;
+  color:#aaa;
+  font-size:10px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+
+.loader-track{
+  height:2px;
+  background:#222;
+}
+
+.loader-progress{
+  width:0;
+  height:100%;
+  background:#fff;
+  box-shadow:0 0 18px #fff;
+  transition:width .3s;
+}
+
+/* CURSOR */
+.cursor-dot,
+.cursor-ring{
+  position:fixed;
+  z-index:999;
+  pointer-events:none;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  opacity:0;
+}
+
+.cursor-dot{
+  width:5px;
+  height:5px;
+  background:#fff;
+}
+
+.cursor-ring{
+  width:32px;
+  height:32px;
+  border:1px solid #aaa;
+  transition:.35s var(--ease);
+}
+
+.cursor-ready .cursor-dot,
+.cursor-ready .cursor-ring{
+  opacity:1;
+}
+
+.cursor-hover .cursor-ring{
+  width:64px;
+  height:64px;
+  border-color:#fff;
+  background:rgba(255,255,255,.1);
+}
+
+/* HEADER */
+.topbar{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:50;
+  display:flex;
+  justify-content:space-between;
+  padding:25px clamp(22px,5vw,78px);
+  pointer-events:none;
+  mix-blend-mode:difference;
+}
+
 .brand{
   display:flex;
   align-items:center;
-  gap:11px;
-  color:#fff;
+  gap:12px;
+  font-size:12px;
   font-weight:700;
+  letter-spacing:.27em;
+  text-transform:uppercase;
 }
 
 .brand-mark{
@@ -156,131 +226,574 @@ button{
   font-size:9px;
 }
 
-.login-wrapper{
+.version,
+.counter{
+  color:#aaa;
+  font-size:9px;
+  letter-spacing:.2em;
+}
+
+.side-line{
+  position:fixed;
+  top:50%;
+  right:clamp(22px,4vw,58px);
+  z-index:30;
+  width:1px;
+  height:122px;
+  transform:translateY(-50%);
+  background:linear-gradient(to bottom,transparent,#fff,transparent);
+  opacity:.42;
+}
+
+.progress{
+  position:fixed;
+  top:50%;
+  right:clamp(22px,4vw,58px);
+  z-index:31;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  transform:translate(50%,-50%);
+}
+
+.progress-item{
   position:relative;
-  z-index:2;
-  width:min(450px,calc(100% - 35px));
-  padding:44px 32px 32px;
+  display:grid;
+  place-items:center;
+  width:9px;
+  height:9px;
+}
+
+.progress-item:before{
+  content:"";
+  width:5px;
+  height:5px;
+  border:1px solid #fff;
+  border-radius:50%;
+  transition:.5s var(--ease);
+}
+
+.progress-item:after{
+  content:attr(data-label);
+  position:absolute;
+  right:18px;
+  color:#888;
+  font-size:8px;
+  letter-spacing:.15em;
+  opacity:0;
+  transform:translateX(8px);
+  transition:.4s var(--ease);
+}
+
+.progress-item:hover:after{
+  opacity:1;
+  transform:translateX(0);
+}
+
+.progress-item.active:before{
+  width:6px;
+  height:28px;
+  border-radius:5px;
+  background:#fff;
+  box-shadow:0 0 20px #fff;
+}
+
+/* SLIDES */
+.slides{
+  height:100dvh;
+  min-height:100svh;
+  overflow-y:auto;
+  scroll-behavior:smooth;
+  scroll-snap-type:y mandatory;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+}
+
+.slide{
+  position:relative;
+  display:flex;
+  align-items:center;
+  min-height:100dvh;
+  height:100dvh;
+  padding:100px clamp(25px,10vw,160px);
+  overflow:hidden;
+  isolation:isolate;
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
+}
+
+.slide:before{
+  content:"";
+  position:absolute;
+  inset:-12%;
+  z-index:-1;
+  opacity:0;
+  transform:scale(1.12);
+  transition:opacity 1.3s,transform 1.8s var(--ease);
+}
+
+.slide.active:before{
+  opacity:1;
+  transform:scale(1);
+}
+
+.slide-one:before{
+  background:radial-gradient(circle at 80% 47%,rgba(255,255,255,.1),transparent 27%);
+}
+
+.slide-two:before{
+  background:radial-gradient(circle at 78% 50%,rgba(255,255,255,.1),transparent 28%);
+}
+
+.slide-three:before{
+  background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.09),transparent 34%);
+}
+
+.slide-content{
+  position:relative;
+  z-index:6;
+  width:min(950px,100%);
+}
+
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:27px;
+  color:#888;
+  font-size:10px;
+  letter-spacing:.27em;
+  text-transform:uppercase;
+}
+
+.eyebrow:before{
+  content:"";
+  width:31px;
+  height:1px;
+  background:#fff;
+}
+
+h1,
+h2{
+  max-width:900px;
+  font-weight:600;
+  letter-spacing:-.075em;
+  line-height:.92;
+}
+
+h1{
+  font-size:clamp(55px,10vw,145px);
+}
+
+h2{
+  font-size:clamp(45px,7.3vw,96px);
+}
+
+.outline{
+  color:transparent;
+  -webkit-text-stroke:1px rgba(255,255,255,.75);
+}
+
+.description{
+  max-width:620px;
+  margin-top:42px;
+  color:#aaa;
+  font-size:clamp(16px,2vw,24px);
+  line-height:1.55;
+  letter-spacing:-.025em;
+}
+
+.description strong{
+  color:#fff;
+  font-weight:500;
+}
+
+.scroll-hint{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-top:70px;
+  color:#fff;
+  font-size:10px;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  opacity:0;
+  transform:translateY(14px);
+  transition:1s var(--ease);
+}
+
+.slide.active .scroll-hint{
+  opacity:1;
+  transform:translateY(0);
+  transition-delay:2.25s;
+}
+
+.arrow{
+  display:grid;
+  place-items:center;
+  width:35px;
+  height:35px;
+  border:1px solid var(--line);
+  border-radius:50%;
+  animation:bounce 1.6s infinite;
+}
+
+.arrow:after{
+  content:"↓";
+  font-size:17px;
+}
+
+@keyframes bounce{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(6px)}
+}
+
+.slide-number{
+  position:absolute;
+  right:clamp(45px,10vw,160px);
+  bottom:82px;
+  color:#4f4f4f;
+  font-size:10px;
+  letter-spacing:.22em;
+}
+
+.slide-line{
+  position:absolute;
+  left:clamp(25px,10vw,160px);
+  bottom:83px;
+  width:75px;
+  height:1px;
+  background:linear-gradient(to right,#fff,transparent);
+  opacity:.35;
+}
+
+/* ORBIT */
+.hero-orbit{
+  position:absolute;
+  top:50%;
+  right:-145px;
+  width:min(48vw,580px);
+  aspect-ratio:1;
+  transform:translateY(-50%);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:50%;
+  box-shadow:
+    0 0 0 35px rgba(255,255,255,.025),
+    0 0 0 74px rgba(255,255,255,.017);
+  animation:orbit 25s linear infinite;
+}
+
+.hero-orbit:before,
+.hero-orbit:after{
+  content:"";
+  position:absolute;
+  inset:17%;
+  border:1px solid rgba(255,255,255,.17);
+  border-radius:50%;
+  transform:rotate(55deg) scaleX(.43);
+}
+
+.hero-orbit:after{
+  transform:rotate(-55deg) scaleX(.43);
+}
+
+.orbit-dot{
+  position:absolute;
+  top:11%;
+  left:43%;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 25px 8px rgba(255,255,255,.6);
+}
+
+@keyframes orbit{
+  from{rotate:0deg}
+  to{rotate:360deg}
+}
+
+/* ABOUT */
+.large-index{
+  position:absolute;
+  right:4vw;
+  bottom:6vh;
+  color:rgba(255,255,255,.035);
+  font-size:min(38vw,580px);
+  font-weight:700;
+  letter-spacing:-.13em;
+  line-height:.7;
+  user-select:none;
+}
+
+.system-card{
+  position:absolute;
+  right:clamp(90px,13vw,210px);
+  top:24%;
+  width:145px;
+  padding:15px;
+  border:1px solid rgba(255,255,255,.07);
+  color:#656565;
+  font-size:8px;
+  letter-spacing:.13em;
+  line-height:1.8;
+  text-transform:uppercase;
+}
+
+.system-card:before{
+  content:"";
+  display:block;
+  height:2px;
+  margin-bottom:12px;
+  background:linear-gradient(to right,#fff 40%,transparent 40%);
+}
+
+/* LOGIN SLIDE */
+.slide-three{
+  justify-content:center;
+  text-align:center;
+}
+
+.slide-three .slide-content{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.photo-frame{
+  position:relative;
+  width:min(470px,82vw);
+  margin:8px auto 27px;
+  padding:9px;
+  border:1px solid rgba(255,255,255,.55);
+  background:#090909;
+  box-shadow:16px 16px 0 rgba(255,255,255,.08),0 0 65px rgba(255,255,255,.08);
+  transform:rotate(-1.3deg);
+  transition:.7s var(--ease);
+}
+
+.photo-frame:hover{
+  transform:rotate(0) scale(1.025);
+  box-shadow:20px 20px 0 rgba(255,255,255,.1),0 0 95px rgba(255,255,255,.14);
+}
+
+.photo-frame img{
+  display:block;
+  width:100%;
+  aspect-ratio:1;
+  object-fit:cover;
+  filter:grayscale(1) contrast(1.12);
+}
+
+.image-label{
+  position:absolute;
+  right:18px;
+  bottom:17px;
+  padding:5px 8px;
+  background:rgba(0,0,0,.75);
+  color:#aaa;
+  font-size:7px;
+  letter-spacing:.15em;
+}
+
+.app-name{
+  margin-bottom:25px;
+  font-size:18px;
+  font-weight:600;
+  letter-spacing:.4em;
+  text-transform:uppercase;
+}
+
+.login-btn{
+  position:relative;
+  min-width:185px;
+  padding:17px 30px;
+  overflow:hidden;
+  border:1px solid #fff;
+  background:#fff;
+  color:#050505;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.25em;
+  text-transform:uppercase;
+  transition:.35s var(--ease);
+}
+
+.login-btn:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:#050505;
+  transform:translateX(-101%);
+  transition:.5s var(--ease);
+}
+
+.login-btn span{
+  position:relative;
+  z-index:1;
+}
+
+.login-btn:hover{
+  color:#fff;
+  box-shadow:0 0 40px rgba(255,255,255,.25);
+}
+
+.login-btn:hover:before{
+  transform:translateX(0);
+}
+
+.footer-note{
+  position:absolute;
+  bottom:25px;
+  color:#4f4f4f;
+  font-size:8px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+}
+
+/* MODAL LOGIN */
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:200;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:rgba(0,0,0,.82);
+  backdrop-filter:blur(15px);
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .45s,visibility .45s;
+}
+
+.modal.show{
+  opacity:1;
+  visibility:visible;
+}
+
+.login-modal-box{
+  position:relative;
+  width:min(470px,100%);
+  padding:48px 34px 34px;
   overflow:hidden;
   border:1px solid rgba(255,255,255,.55);
   background:
-    radial-gradient(
-      circle at 50% -20%,
-      rgba(255,255,255,.15),
-      transparent 42%
-    ),
-    linear-gradient(
-      135deg,
-      rgba(255,255,255,.08),
-      transparent 38%
-    ),
-    var(--panel);
-  box-shadow:
-    0 25px 100px rgba(0,0,0,.9),
-    0 0 70px rgba(255,255,255,.08);
-  animation:appear .8s var(--ease) forwards;
+    radial-gradient(circle at 50% -20%,rgba(255,255,255,.16),transparent 42%),
+    linear-gradient(135deg,rgba(255,255,255,.08),transparent 38%),
+    #080808;
+  box-shadow:0 25px 100px rgba(0,0,0,.95),0 0 80px rgba(255,255,255,.09);
+  text-align:left;
+  transform:translateY(35px) scale(.9) rotateX(8deg);
+  transition:transform .7s var(--ease);
 }
 
-@keyframes appear{
-  from{
-    opacity:0;
-    transform:translateY(30px) scale(.94);
-    filter:blur(5px);
-  }
-
-  to{
-    opacity:1;
-    transform:translateY(0) scale(1);
-    filter:blur(0);
-  }
+.modal.show .login-modal-box{
+  transform:translateY(0) scale(1) rotateX(0);
 }
 
-.login-wrapper:before{
+.login-modal-box:before{
   content:"ZEZO SECURE ACCESS // BETA";
   position:absolute;
-  top:16px;
-  left:20px;
+  top:17px;
+  left:22px;
   color:#666;
   font-size:8px;
   letter-spacing:.16em;
 }
 
-.login-wrapper:after{
+.login-modal-box:after{
   content:"AUTH-001";
   position:absolute;
-  right:20px;
-  bottom:17px;
+  right:22px;
+  bottom:18px;
   color:#444;
   font-size:8px;
-  letter-spacing:.16em;
+  letter-spacing:.15em;
 }
 
 .login-glow{
   position:absolute;
-  top:-125px;
+  top:-120px;
   left:50%;
-  width:270px;
-  height:270px;
+  width:260px;
+  height:260px;
   border-radius:50%;
   background:rgba(255,255,255,.1);
-  filter:blur(75px);
-  pointer-events:none;
+  filter:blur(70px);
   transform:translateX(-50%);
+  pointer-events:none;
+}
+
+.close-btn{
+  position:absolute;
+  top:13px;
+  right:17px;
+  z-index:2;
+  display:grid;
+  place-items:center;
+  width:29px;
+  height:29px;
+  border:1px solid var(--line);
+  border-radius:50%;
+  background:transparent;
+  color:#fff;
+  font-size:18px;
+  transition:.35s;
+}
+
+.close-btn:hover{
+  background:#fff;
+  color:#000;
+  transform:rotate(90deg);
 }
 
 .login-header{
   position:relative;
   z-index:1;
-  margin-bottom:29px;
+  margin-bottom:30px;
   text-align:center;
 }
 
 .login-symbol{
   display:grid;
   place-items:center;
-  width:62px;
-  height:62px;
+  width:58px;
+  height:58px;
   margin:0 auto 20px;
   border:1px solid #fff;
   border-radius:50%;
   color:#fff;
-  font-size:24px;
-  box-shadow:0 0 25px rgba(255,255,255,.35);
-  animation:pulse 2.2s infinite;
+  font-size:22px;
+  box-shadow:0 0 18px rgba(255,255,255,.4);
+  animation:loginPulse 2.2s infinite;
 }
 
-@keyframes pulse{
-  0%,100%{
-    box-shadow:0 0 18px rgba(255,255,255,.3);
-  }
-
-  50%{
-    box-shadow:0 0 42px rgba(255,255,255,.65);
-  }
+@keyframes loginPulse{
+  0%,100%{box-shadow:0 0 18px rgba(255,255,255,.3)}
+  50%{box-shadow:0 0 38px rgba(255,255,255,.65)}
 }
 
-.login-title{
-  font-size:28px;
+.login-heading{
+  font-size:29px;
   font-weight:600;
   letter-spacing:.12em;
   text-transform:uppercase;
 }
 
-.login-subtitle{
+.login-subheading{
   margin-top:9px;
   color:#777;
   font-size:10px;
-  letter-spacing:.15em;
+  letter-spacing:.16em;
   text-transform:uppercase;
 }
 
-.form-field{
+.login-field{
   position:relative;
-  z-index:1;
   margin-bottom:19px;
 }
 
-.form-field label{
+.login-field label{
   display:block;
   margin-bottom:8px;
   color:#888;
@@ -289,35 +802,33 @@ button{
   text-transform:uppercase;
 }
 
-.form-field input{
+.login-field input{
   width:100%;
   padding:16px 15px;
   outline:none;
-  border:1px solid var(--line);
+  border:1px solid rgba(255,255,255,.18);
   background:rgba(0,0,0,.55);
   color:#fff;
   font-size:12px;
   transition:.35s var(--ease);
 }
 
-.form-field input::placeholder{
+.login-field input::placeholder{
   color:#4e4e4e;
 }
 
-.form-field input:focus{
+.login-field input:focus{
   border-color:#fff;
   background:rgba(255,255,255,.06);
-  box-shadow:
-    0 0 0 1px rgba(255,255,255,.16),
-    0 0 25px rgba(255,255,255,.08);
+  box-shadow:0 0 0 1px rgba(255,255,255,.2),0 0 22px rgba(255,255,255,.09);
 }
 
-.password-box{
+.password-wrapper{
   position:relative;
 }
 
-.password-box input{
-  padding-right:50px;
+.password-wrapper input{
+  padding-right:48px;
 }
 
 .password-toggle{
@@ -327,7 +838,7 @@ button{
   border:0;
   background:transparent;
   color:#777;
-  font-size:13px;
+  font-size:12px;
   transform:translateY(-50%);
 }
 
@@ -335,9 +846,8 @@ button{
   color:#fff;
 }
 
-.submit-button{
+.login-submit{
   position:relative;
-  z-index:1;
   width:100%;
   padding:17px;
   overflow:hidden;
@@ -351,7 +861,7 @@ button{
   transition:.4s var(--ease);
 }
 
-.submit-button:before{
+.login-submit:before{
   content:"";
   position:absolute;
   inset:0;
@@ -360,26 +870,26 @@ button{
   transition:.5s var(--ease);
 }
 
-.submit-button span{
+.login-submit span{
   position:relative;
   z-index:1;
 }
 
-.submit-button:hover{
+.login-submit:hover{
   color:#fff;
   box-shadow:0 0 35px rgba(255,255,255,.25);
 }
 
-.submit-button:hover:before{
+.login-submit:hover:before{
   transform:translateX(0);
 }
 
-.submit-button.loading{
+.login-submit.loading{
   pointer-events:none;
-  color:#999;
+  color:#aaa;
 }
 
-.submit-button.loading:after{
+.login-submit.loading:after{
   content:"";
   position:absolute;
   top:50%;
@@ -394,43 +904,24 @@ button{
 }
 
 @keyframes spin{
-  to{
-    transform:translateY(-50%) rotate(360deg);
-  }
+  to{transform:translateY(-50%) rotate(360deg)}
 }
 
-.status-text{
-  position:relative;
-  z-index:1;
-  min-height:18px;
-  margin-top:16px;
-  color:#666;
-  font-size:10px;
-  line-height:1.5;
-  text-align:center;
-}
-
-.notification{
+/* NOTIFICATION ATAS */
+.zezo-notification{
   position:fixed;
   top:25px;
   left:50%;
-  z-index:100;
+  z-index:700;
   display:flex;
   align-items:center;
-  gap:13px;
-  width:min(430px,calc(100% - 35px));
-  padding:16px 18px;
-  border:1px solid rgba(255,255,255,.4);
-  background:
-    linear-gradient(
-      120deg,
-      rgba(255,255,255,.13),
-      rgba(255,255,255,.03)
-    ),
-    rgba(5,5,5,.9);
-  box-shadow:
-    0 18px 70px rgba(0,0,0,.8),
-    0 0 35px rgba(255,255,255,.1);
+  gap:14px;
+  width:min(420px,calc(100% - 35px));
+  padding:16px 19px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.38);
+  background:linear-gradient(120deg,rgba(255,255,255,.13),rgba(255,255,255,.03)),rgba(7,7,7,.9);
+  box-shadow:0 18px 70px rgba(0,0,0,.75),0 0 35px rgba(255,255,255,.08);
   backdrop-filter:blur(20px);
   opacity:0;
   pointer-events:none;
@@ -438,13 +929,13 @@ button{
   transition:.65s var(--ease);
 }
 
-.notification.show{
+.zezo-notification.show{
   opacity:1;
   pointer-events:auto;
   transform:translate(-50%,0) scale(1);
 }
 
-.notification.error{
+.zezo-notification.error{
   border-color:rgba(255,80,80,.75);
 }
 
@@ -460,12 +951,12 @@ button{
   font-size:14px;
 }
 
-.notification.error .notification-icon{
-  border-color:#ff6565;
-  color:#ff6565;
+.zezo-notification.error .notification-icon{
+  border-color:#ff6666;
+  color:#ff6666;
 }
 
-.notification-body{
+.notification-content{
   min-width:0;
 }
 
@@ -495,42 +986,105 @@ button{
   color:#fff;
 }
 
-.footer{
-  position:fixed;
-  right:0;
-  bottom:24px;
-  left:0;
-  color:#4f4f4f;
-  font-size:8px;
-  letter-spacing:.2em;
-  text-align:center;
-  text-transform:uppercase;
-}
-
-@media(max-width:600px){
+/* MOBILE */
+@media(max-width:700px){
   body{
-    overflow:auto;
+    cursor:auto;
   }
 
-  .background-orbit{
-    width:125vw;
+  .cursor-dot,
+  .cursor-ring{
+    display:none;
   }
 
   .topbar{
     padding:20px;
   }
 
-  .login-wrapper{
-    padding:44px 24px 32px;
+  .brand{
+    font-size:10px;
   }
 
-  .login-title{
+  .version{
+    display:none;
+  }
+
+  .side-line,
+  .progress{
+    right:18px;
+  }
+
+  .slide{
+    height:100svh;
+    min-height:100svh;
+    padding:90px 25px 60px;
+  }
+
+  .slide-content{
+    opacity:.25;
+    transform:translateY(30px) scale(.985);
+    filter:blur(3px);
+    transition:opacity 1s var(--ease),transform 1.1s var(--ease),filter 1s var(--ease);
+  }
+
+  .slide.active .slide-content{
+    opacity:1;
+    transform:translateY(0) scale(1);
+    filter:blur(0);
+  }
+
+  .hero-orbit{
+    top:68%;
+    right:-185px;
+    width:430px;
+    opacity:.5;
+    transform:translateY(-50%) scale(.8);
+  }
+
+  .description{
+    margin-top:30px;
+    font-size:17px;
+  }
+
+  .scroll-hint{
+    margin-top:54px;
+    font-size:8px;
+    letter-spacing:.23em;
+  }
+
+  .slide.active .scroll-hint{
+    transition-delay:1.5s;
+  }
+
+  .large-index{
+    right:-10px;
+    bottom:10vh;
+    font-size:70vw;
+  }
+
+  .system-card{
+    display:none;
+  }
+
+  .photo-frame{
+    width:min(390px,82vw);
+  }
+
+  .footer-note{
+    bottom:20px;
+    font-size:7px;
+  }
+
+  .login-modal-box{
+    padding:46px 24px 32px;
+  }
+
+  .login-heading{
     font-size:24px;
   }
 
-  .footer{
-    position:relative;
-    margin:30px 0 20px;
+  .zezo-notification{
+    top:16px;
   }
 }
 </style>
@@ -538,97 +1092,243 @@ button{
 
 <body>
 
-<div class="background-orbit">
-  <div class="orbit-light"></div>
+<div class="loader" id="loader">
+  <div class="loader-inner">
+    <div class="loader-top">
+      <span>ZeZo System</span>
+      <span>Beta Build</span>
+    </div>
+
+    <div class="loader-logo">
+      Z<span>eZo</span>
+    </div>
+
+    <div class="loader-status" id="loaderStatus">
+      Initializing experience...
+    </div>
+
+    <div class="loader-track">
+      <div class="loader-progress" id="loaderProgress"></div>
+    </div>
+
+    <div class="loader-bottom">
+      <span>Monochrome Interface</span>
+      <span id="loaderPercent">00%</span>
+    </div>
+  </div>
 </div>
+
+<div class="noise"></div>
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
 <header class="topbar">
   <div class="brand">
     <span class="brand-mark">Z</span>
     <span>ZeZo</span>
+    <span class="version">Beta</span>
   </div>
 
-  <span>Beta Login</span>
+  <div class="counter" id="counter">
+    01 — 03
+  </div>
 </header>
 
-<main class="login-wrapper">
-  <div class="login-glow"></div>
+<div class="side-line"></div>
 
-  <div class="login-header">
-    <div class="login-symbol">Z</div>
+<nav class="progress">
+  <span class="progress-item active" data-index="0" data-label="INTRO"></span>
+  <span class="progress-item" data-index="1" data-label="ABOUT"></span>
+  <span class="progress-item" data-index="2" data-label="ACCESS"></span>
+</nav>
 
-    <h1 class="login-title">
-      ZeZo Login
-    </h1>
+<main class="slides" id="slides">
 
-    <p class="login-subtitle">
-      Secure beta access
-    </p>
+<section class="slide slide-one active">
+  <div class="hero-orbit">
+    <div class="orbit-dot"></div>
   </div>
 
-  <form id="loginForm">
+  <div class="slide-content">
+    <div class="eyebrow">Beta / Introduction</div>
 
-    <div class="form-field">
-      <label for="username">
-        Username
-      </label>
+    <h1>
+      Welcome To<br>
+      <span class="outline">ZeZo App</span>
+    </h1>
 
-      <input
-        id="username"
-        name="username"
-        type="text"
-        autocomplete="username"
-        placeholder="Masukan Username"
-        required
+    <p class="description">
+      A monochrome experience designed for
+      <strong>testing, exploring,</strong>
+      and discovering something new.
+    </p>
+
+    <div class="scroll-hint">
+      <span class="arrow"></span>
+      <span>Slide To Down</span>
+    </div>
+  </div>
+
+  <div class="slide-line"></div>
+  <div class="slide-number">01 / 03</div>
+</section>
+
+<section class="slide slide-two">
+  <div class="large-index">02</div>
+
+  <div class="system-card">
+    <div>System: ZeZo</div>
+    <div>Status: Testing</div>
+    <div>Build: Beta</div>
+    <div>Access: Limited</div>
+  </div>
+
+  <div class="slide-content">
+    <div class="eyebrow">About / ZeZo</div>
+
+    <h2>
+      Built By<br>
+      <span class="outline">Xylon.</span>
+    </h2>
+
+    <p class="description">
+      This App Has Created By Xylon.<br>
+      This App Only For Testing Application Only.
+    </p>
+
+    <div class="scroll-hint">
+      <span class="arrow"></span>
+      <span>Slide To Down</span>
+    </div>
+  </div>
+
+  <div class="slide-line"></div>
+  <div class="slide-number">02 / 03</div>
+</section>
+
+<section class="slide slide-three">
+  <div class="slide-content">
+    <div class="eyebrow">Beta Access / ZeZo</div>
+
+    <div class="photo-frame">
+      <img
+        src="https://files.catbox.moe/nh4s1u.jpg"
+        alt="ZeZo App artwork"
       >
+
+      <span class="image-label">
+        IMAGE / 003
+      </span>
     </div>
 
-    <div class="form-field">
-      <label for="password">
-        Password
-      </label>
-
-      <div class="password-box">
-        <input
-          id="password"
-          name="password"
-          type="password"
-          autocomplete="current-password"
-          placeholder="Masukan Password"
-          required
-        >
-
-        <button
-          class="password-toggle"
-          id="passwordToggle"
-          type="button"
-        >
-          ◉
-        </button>
-      </div>
+    <div class="app-name">
+      ZeZo App
     </div>
 
-    <button
-      class="submit-button"
-      id="loginButton"
-      type="submit"
-    >
-      <span>LOGIN</span>
+    <button class="login-btn" id="loginButton" type="button">
+      <span>Log In</span>
     </button>
+  </div>
 
-    <div class="status-text" id="statusText">
-      Masukkan username dan password dari bot Telegram.
-    </div>
-  </form>
+  <div class="footer-note">
+    Beta testing version / ZeZo System
+  </div>
+
+  <div class="slide-line"></div>
+  <div class="slide-number">03 / 03</div>
+</section>
+
 </main>
 
-<footer class="footer">
-  ZeZo App / Beta Testing Environment
-</footer>
-
+<!-- LOGIN MODAL -->
 <div
-  class="notification"
-  id="notification"
+  class="modal"
+  id="maintenanceModal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="loginTitle"
+>
+  <div class="login-modal-box">
+    <div class="login-glow"></div>
+
+    <button
+      class="close-btn"
+      id="closeButton"
+      type="button"
+      aria-label="Tutup login"
+    >
+      ×
+    </button>
+
+    <div class="login-header">
+      <div class="login-symbol">Z</div>
+
+      <h2 class="login-heading" id="loginTitle">
+        ZeZo Login
+      </h2>
+
+      <p class="login-subheading">
+        Secure beta access
+      </p>
+    </div>
+
+    <form class="login-form" id="loginForm">
+
+      <div class="login-field">
+        <label for="loginUsername">
+          Username
+        </label>
+
+        <input
+          id="loginUsername"
+          type="text"
+          autocomplete="username"
+          placeholder="Masukan Username"
+          required
+        >
+      </div>
+
+      <div class="login-field">
+        <label for="loginPassword">
+          Password
+        </label>
+
+        <div class="password-wrapper">
+          <input
+            id="loginPassword"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Masukan Password"
+            required
+          >
+
+          <button
+            class="password-toggle"
+            id="passwordToggle"
+            type="button"
+          >
+            ◉
+          </button>
+        </div>
+      </div>
+
+      <button
+        class="login-submit"
+        id="loginSubmit"
+        type="submit"
+      >
+        <span>LOGIN</span>
+      </button>
+
+    </form>
+  </div>
+</div>
+
+<!-- NOTIFICATION DI ATAS -->
+<div
+  class="zezo-notification"
+  id="zezoNotification"
   role="status"
   aria-live="polite"
 >
@@ -636,7 +1336,7 @@ button{
     ✓
   </div>
 
-  <div class="notification-body">
+  <div class="notification-content">
     <div class="notification-label" id="notificationLabel">
       SYSTEM MESSAGE
     </div>
@@ -656,34 +1356,59 @@ button{
 </div>
 
 <script>
-/*
-  Supabase Edge Function login.
-  Function ini nanti memeriksa username/password
-  ke tabel zezo_keys.
-*/
-const LOGIN_API =
-  "https://fmhddziqeryllwxyvtil.supabase.co/functions/v1/login";
+const body =
+  document.body;
 
-const form =
-  document.getElementById("loginForm");
+const loader =
+  document.getElementById("loader");
 
-const usernameInput =
-  document.getElementById("username");
+const loaderProgress =
+  document.getElementById("loaderProgress");
 
-const passwordInput =
-  document.getElementById("password");
+const loaderPercent =
+  document.getElementById("loaderPercent");
 
-const passwordToggle =
-  document.getElementById("passwordToggle");
+const loaderStatus =
+  document.getElementById("loaderStatus");
+
+const slidesContainer =
+  document.getElementById("slides");
+
+const slideElements =
+  document.querySelectorAll(".slide");
+
+const progressItems =
+  document.querySelectorAll(".progress-item");
+
+const counter =
+  document.getElementById("counter");
+
+const modal =
+  document.getElementById("maintenanceModal");
 
 const loginButton =
   document.getElementById("loginButton");
 
-const statusText =
-  document.getElementById("statusText");
+const closeButton =
+  document.getElementById("closeButton");
+
+const loginForm =
+  document.getElementById("loginForm");
+
+const loginUsername =
+  document.getElementById("loginUsername");
+
+const loginPassword =
+  document.getElementById("loginPassword");
+
+const loginSubmit =
+  document.getElementById("loginSubmit");
+
+const passwordToggle =
+  document.getElementById("passwordToggle");
 
 const notification =
-  document.getElementById("notification");
+  document.getElementById("zezoNotification");
 
 const notificationIcon =
   document.getElementById("notificationIcon");
@@ -697,7 +1422,186 @@ const notificationMessage =
 const notificationClose =
   document.getElementById("notificationClose");
 
+const cursorDot =
+  document.getElementById("cursorDot");
+
+const cursorRing =
+  document.getElementById("cursorRing");
+
+let currentSlide = 0;
+let wheelLocked = false;
+let wheelTimer;
 let notificationTimer;
+
+let loadingValue = 0;
+let messageIndex = 0;
+
+const loadingMessages = [
+  "Initializing experience...",
+  "Loading monochrome interface...",
+  "Preparing ZeZo system...",
+  "Checking beta environment...",
+  "System ready..."
+];
+
+const loadingInterval = setInterval(() => {
+  loadingValue += Math.floor(Math.random() * 7) + 3;
+
+  if(loadingValue >= 100){
+    loadingValue = 100;
+    clearInterval(loadingInterval);
+  }
+
+  loaderProgress.style.width =
+    loadingValue + "%";
+
+  loaderPercent.textContent =
+    String(loadingValue).padStart(2,"0") + "%";
+
+  if(
+    loadingValue > messageIndex * 20 &&
+    messageIndex < loadingMessages.length
+  ){
+    loaderStatus.textContent =
+      loadingMessages[messageIndex];
+
+    messageIndex++;
+  }
+
+  if(loadingValue >= 100){
+    setTimeout(() => {
+      loader.classList.add("hide");
+    },650);
+  }
+},115);
+
+function updateSlide(index){
+  currentSlide = Math.max(
+    0,
+    Math.min(index,slideElements.length - 1)
+  );
+
+  slideElements.forEach((slide,i) => {
+    slide.classList.toggle(
+      "active",
+      i === currentSlide
+    );
+  });
+
+  progressItems.forEach((item,i) => {
+    item.classList.toggle(
+      "active",
+      i === currentSlide
+    );
+  });
+
+  counter.textContent =
+    "0" + (currentSlide + 1) + " — 03";
+}
+
+const observer = new IntersectionObserver(
+  entries => {
+    entries.forEach(entry => {
+      if(
+        entry.isIntersecting &&
+        entry.intersectionRatio >= .65
+      ){
+        const index =
+          [...slideElements].indexOf(entry.target);
+
+        if(index !== -1){
+          updateSlide(index);
+        }
+      }
+    });
+  },
+  {
+    root:slidesContainer,
+    threshold:[.65,.8,1]
+  }
+);
+
+slideElements.forEach(slide => {
+  observer.observe(slide);
+});
+
+slidesContainer.addEventListener(
+  "wheel",
+  event => {
+    if(window.innerWidth <= 700){
+      return;
+    }
+
+    if(Math.abs(event.deltaY) < 8){
+      return;
+    }
+
+    event.preventDefault();
+
+    if(wheelLocked){
+      return;
+    }
+
+    wheelLocked = true;
+
+    const direction =
+      event.deltaY > 0 ? 1 : -1;
+
+    const next =
+      currentSlide + direction;
+
+    if(
+      next >= 0 &&
+      next < slideElements.length
+    ){
+      slideElements[next].scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+    }
+
+    clearTimeout(wheelTimer);
+
+    wheelTimer = setTimeout(() => {
+      wheelLocked = false;
+    },1100);
+  },
+  {passive:false}
+);
+
+progressItems.forEach((item,index) => {
+  item.addEventListener("click",() => {
+    slideElements[index].scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+  });
+});
+
+/* LOGIN */
+function openLogin(){
+  modal.classList.add("show");
+  body.classList.add("modal-open");
+
+  setTimeout(() => {
+    loginUsername.focus();
+  },400);
+}
+
+function closeLogin(){
+  modal.classList.remove("show");
+  body.classList.remove("modal-open");
+
+  loginForm.reset();
+
+  loginPassword.type =
+    "password";
+
+  passwordToggle.textContent =
+    "◉";
+
+  loginButton.focus();
+}
 
 function showNotification(
   type,
@@ -717,9 +1621,7 @@ function showNotification(
   );
 
   notificationIcon.textContent =
-    type === "success"
-      ? "✓"
-      : "×";
+    type === "success" ? "✓" : "×";
 
   notificationLabel.textContent =
     label ||
@@ -737,13 +1639,32 @@ function showNotification(
   },5000);
 }
 
+loginButton.addEventListener(
+  "click",
+  openLogin
+);
+
+closeButton.addEventListener(
+  "click",
+  closeLogin
+);
+
+modal.addEventListener(
+  "click",
+  event => {
+    if(event.target === modal){
+      closeLogin();
+    }
+  }
+);
+
 passwordToggle.addEventListener(
   "click",
   () => {
     const hidden =
-      passwordInput.type === "password";
+      loginPassword.type === "password";
 
-    passwordInput.type =
+    loginPassword.type =
       hidden ? "text" : "password";
 
     passwordToggle.textContent =
@@ -758,16 +1679,16 @@ notificationClose.addEventListener(
   }
 );
 
-form.addEventListener(
+loginForm.addEventListener(
   "submit",
   async event => {
     event.preventDefault();
 
     const username =
-      usernameInput.value.trim();
+      loginUsername.value.trim();
 
     const password =
-      passwordInput.value;
+      loginPassword.value.trim();
 
     if(!username || !password){
       showNotification(
@@ -779,117 +1700,98 @@ form.addEventListener(
       return;
     }
 
-    loginButton.classList.add("loading");
+    loginSubmit.classList.add("loading");
 
-    loginButton.querySelector("span")
+    loginSubmit.querySelector("span")
       .textContent = "CHECKING";
 
-    statusText.textContent =
-      "Memeriksa data ke ZeZo Database...";
+    await new Promise(resolve => {
+      setTimeout(resolve,900);
+    });
 
-    try{
-      const response =
-        await fetch(
-          LOGIN_API,
-          {
-            method:"POST",
-            headers:{
-              "Content-Type":"application/json",
-              "Accept":"application/json"
-            },
-            body:JSON.stringify({
-              username,
-              password
-            })
-          }
-        );
+    loginSubmit.classList.remove("loading");
 
-      const data =
-        await response.json();
+    loginSubmit.querySelector("span")
+      .textContent = "LOGIN";
 
-      if(!response.ok || !data.ok){
-        throw new Error(
-          data.message ||
-          "Username atau password salah."
-        );
-      }
+    closeLogin();
 
-      /*
-        Tidak menggunakan localStorage.
-        Token hanya hidup selama tab browser aktif.
-      */
-      sessionStorage.setItem(
-        "zezo_session",
-        data.token
-      );
-
-      sessionStorage.setItem(
-        "zezo_username",
-        data.user?.username ||
-        username
-      );
-
-      showNotification(
-        "success",
-        `Berhasil! Welcome ${
-          data.user?.username || username
-        } To ZezoApp`,
-        "LOGIN SUCCESSFUL"
-      );
-
-      statusText.textContent =
-        "Login berhasil. Mengalihkan ke dashboard...";
-
-      setTimeout(() => {
-        window.location.href =
-          "dashboard.html";
-      },1200);
-
-    }catch(error){
-      console.error(
-        "LOGIN ERROR:",
-        error
-      );
-
-      let message =
-        "Gagal! Ada Kesalahan Di Username/Password";
-
-      if(error instanceof TypeError){
-        message =
-          "Server login belum tersedia atau koneksi ditolak.";
-      }
-
-      showNotification(
-        "error",
-        message,
-        "LOGIN FAILED"
-      );
-
-      statusText.textContent =
-        "Login gagal. Periksa kembali data kamu.";
-
-    }finally{
-      loginButton.classList.remove("loading");
-
-      loginButton.querySelector("span")
-        .textContent = "LOGIN";
-    }
+    showNotification(
+      "success",
+      `Berhasil! Welcome ${username} To ZezoApp`,
+      "LOGIN SUCCESSFUL"
+    );
   }
 );
 
 document.addEventListener(
   "keydown",
   event => {
-    if(event.key === "Enter"){
-      if(
-        document.activeElement ===
-        passwordToggle
-      ){
-        return;
-      }
+    if(
+      event.key === "Escape" &&
+      modal.classList.contains("show")
+    ){
+      closeLogin();
     }
   }
 );
+
+/* CURSOR LAPTOP */
+if(
+  window.matchMedia("(min-width:701px)").matches
+){
+  body.classList.add("cursor-ready");
+
+  let ringX = 0;
+  let ringY = 0;
+  let mouseX = 0;
+  let mouseY = 0;
+
+  window.addEventListener(
+    "mousemove",
+    event => {
+      mouseX = event.clientX;
+      mouseY = event.clientY;
+
+      cursorDot.style.left =
+        mouseX + "px";
+
+      cursorDot.style.top =
+        mouseY + "px";
+    }
+  );
+
+  function animateCursor(){
+    ringX += (mouseX - ringX) * .14;
+    ringY += (mouseY - ringY) * .14;
+
+    cursorRing.style.left =
+      ringX + "px";
+
+    cursorRing.style.top =
+      ringY + "px";
+
+    requestAnimationFrame(
+      animateCursor
+    );
+  }
+
+  animateCursor();
+
+  document.querySelectorAll(
+    "button,.progress-item,.photo-frame,.brand-mark"
+  ).forEach(element => {
+    element.addEventListener(
+      "mouseenter",
+      () => body.classList.add("cursor-hover")
+    );
+
+    element.addEventListener(
+      "mouseleave",
+      () => body.classList.remove("cursor-hover")
+    );
+  });
+}
 </script>
 
 </body>

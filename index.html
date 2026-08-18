@@ -209,7 +209,7 @@ h1{
 }
 .modal.show{ opacity:1; visibility:visible; }
 .modal-box{
-  position:relative; width:min(320px,100%); padding:40px 28px 30px; overflow:hidden;
+  position:relative; width:min(340px,100%); padding:38px 30px 32px; overflow:hidden;
   border:1px solid var(--line);
   background:radial-gradient(circle at 50% -20%, rgba(255,255,255,.12), transparent 42%), #0a0a0a;
   box-shadow:0 25px 90px rgba(0,0,0,.9), 0 0 60px rgba(255,255,255,.06);
@@ -224,12 +224,71 @@ h1{
 }
 .close-btn:hover{ background:#fff; color:#000; transform:rotate(90deg); }
 .modal-symbol{
-  display:grid; place-items:center; width:48px; height:48px; margin:0 auto 20px;
+  display:grid; place-items:center; width:48px; height:48px; margin:0 auto 18px;
   border:1px solid #fff; border-radius:50%; font-size:18px; font-weight:600; animation:pulse 2.2s infinite;
 }
 @keyframes pulse{ 0%,100%{ box-shadow:0 0 14px rgba(255,255,255,.25); } 50%{ box-shadow:0 0 30px rgba(255,255,255,.55); } }
-.modal-title{ font-size:19px; font-weight:600; letter-spacing:.06em; }
-.modal-text{ margin-top:8px; font-family:'Inter',sans-serif; font-size:13px; color:var(--gray); letter-spacing:.04em; }
+.login-heading{
+  font-family:'Space Grotesk',sans-serif; font-size:21px; font-weight:600; letter-spacing:.16em;
+}
+
+.login-form{ margin-top:26px; text-align:left; }
+.login-field{ margin-bottom:17px; }
+.login-field label{
+  display:block; margin-bottom:8px; color:var(--gray); font-size:10px; letter-spacing:.1em;
+}
+.login-field input{
+  width:100%; padding:13px 14px; border:1px solid var(--line); border-radius:9px;
+  background:rgba(255,255,255,.03); color:#fff; font-family:'Inter',sans-serif; font-size:13px;
+  outline:none; transition:.3s var(--ease); cursor:text;
+}
+.login-field input::placeholder{ color:var(--gray-dim); }
+.login-field input:focus{ border-color:rgba(255,255,255,.5); background:rgba(255,255,255,.06); box-shadow:0 0 0 3px rgba(255,255,255,.06); }
+
+.login-submit{
+  position:relative; width:100%; margin-top:6px; padding:14px; overflow:hidden;
+  border:1px solid #fff; background:#fff; color:#050505; font-family:'Space Grotesk',sans-serif;
+  font-size:11px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; cursor:none;
+  transition:.35s var(--ease);
+}
+.login-submit:before{ content:''; position:absolute; inset:0; background:#050505; transform:translateX(-101%); transition:.5s var(--ease); }
+.login-submit span{ position:relative; z-index:1; }
+.login-submit:hover{ color:#fff; box-shadow:0 0 28px rgba(255,255,255,.25); }
+.login-submit:hover:before{ transform:translateX(0); }
+.login-submit.loading{ pointer-events:none; opacity:.75; }
+.login-submit.loading span:after{
+  content:''; display:inline-block; width:11px; height:11px; margin-left:8px;
+  border:1.5px solid rgba(5,5,5,.35); border-top-color:#050505; border-radius:50%;
+  vertical-align:-2px; animation:spin .7s linear infinite;
+}
+
+/* ---------- Notification Glass System ---------- */
+.glass-notif{
+  position:fixed; top:26px; left:50%; z-index:400;
+  display:flex; align-items:flex-start; gap:13px;
+  width:min(380px, calc(100% - 32px)); padding:16px 17px;
+  border-radius:16px; border:1px solid rgba(255,255,255,.22);
+  background:rgba(15,15,16,.55); backdrop-filter:blur(22px) saturate(140%);
+  box-shadow:0 20px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08);
+  opacity:0; pointer-events:none;
+  transform:translate(-50%,-16px) scale(.96);
+  transition:opacity .5s var(--ease), transform .5s var(--ease);
+}
+.glass-notif.show{ opacity:1; pointer-events:auto; transform:translate(-50%,0) scale(1); }
+.glass-notif-icon{
+  flex:0 0 auto; display:grid; place-items:center; width:30px; height:30px; margin-top:1px;
+  border-radius:50%; font-size:14px;
+}
+.glass-notif.success .glass-notif-icon{ background:rgba(120,255,180,.14); color:#8CFFC0; border:1px solid rgba(140,255,192,.4); }
+.glass-notif.fail .glass-notif-icon{ background:rgba(255,120,120,.14); color:#FF9C9C; border:1px solid rgba(255,140,140,.4); }
+.glass-notif-body{ flex:1; min-width:0; }
+.glass-notif-title{ font-family:'Space Grotesk',sans-serif; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--gray); margin-bottom:3px; }
+.glass-notif-msg{ font-size:13px; line-height:1.5; color:#fff; word-break:break-word; }
+.glass-notif-close{
+  flex:0 0 auto; background:transparent; border:0; color:var(--gray); font-size:15px;
+  cursor:none; line-height:1; padding:2px;
+}
+.glass-notif-close:hover{ color:#fff; }
 
 @media (prefers-reduced-motion: reduce){
   *{ transition:none !important; animation:none !important; }
@@ -332,13 +391,33 @@ h1{
 
 </main>
 
-<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="loginHeading">
   <div class="modal-box">
     <button class="close-btn" id="closeButton" type="button" aria-label="Tutup">×</button>
     <div class="modal-symbol">Z</div>
-    <p class="modal-title" id="modalTitle">ZeZo Speak</p>
-    <p class="modal-text">On MainTance Bro</p>
+    <h2 class="login-heading" id="loginHeading">ZEZO APP</h2>
+
+    <form class="login-form" id="loginForm">
+      <div class="login-field">
+        <label for="loginUsername">Enter Your Username :</label>
+        <input type="text" id="loginUsername" placeholder="Username" autocomplete="username" required>
+      </div>
+      <div class="login-field">
+        <label for="loginPassword">Enter Your Password :</label>
+        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="login-submit" id="loginSubmit"><span>Log In</span></button>
+    </form>
   </div>
+</div>
+
+<div class="glass-notif" id="glassNotif" role="status" aria-live="polite">
+  <div class="glass-notif-icon" id="glassNotifIcon">✓</div>
+  <div class="glass-notif-body">
+    <div class="glass-notif-title" id="glassNotifTitle">Berhasil</div>
+    <div class="glass-notif-msg" id="glassNotifMsg"></div>
+  </div>
+  <button class="glass-notif-close" id="glassNotifClose" type="button" aria-label="Tutup notifikasi">×</button>
 </div>
 
 <script>
@@ -435,6 +514,60 @@ loginButton.addEventListener('click', openModal);
 closeButton.addEventListener('click', closeModal);
 modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('show')) closeModal(); });
+
+/* ---------- Notification Glass System ---------- */
+const glassNotif = document.getElementById('glassNotif');
+const glassNotifIcon = document.getElementById('glassNotifIcon');
+const glassNotifTitle = document.getElementById('glassNotifTitle');
+const glassNotifMsg = document.getElementById('glassNotifMsg');
+const glassNotifClose = document.getElementById('glassNotifClose');
+let notifTimer = null;
+
+function showNotif(type, message) {
+  clearTimeout(notifTimer);
+  glassNotif.classList.remove('success', 'fail');
+  glassNotif.classList.add(type, 'show');
+  glassNotifIcon.textContent = type === 'success' ? '✓' : '×';
+  glassNotifTitle.textContent = type === 'success' ? 'Berhasil' : 'Gagal';
+  glassNotifMsg.textContent = message;
+  notifTimer = setTimeout(() => glassNotif.classList.remove('show'), 5000);
+}
+glassNotifClose.addEventListener('click', () => glassNotif.classList.remove('show'));
+
+/* ---------- Login form ---------- */
+/* PENTING: validasi ini masih demo lokal (belum nyambung ke key dari bot Telegram).
+   Begitu bot & database key-nya siap, ganti bagian checkCredentials() ini jadi
+   fetch ke endpoint validasi key yang sebenarnya. */
+function checkCredentials(username, password) {
+  // Demo sementara: username "demo" & password "demo123" dianggap valid.
+  return username === 'demo' && password === 'demo123';
+}
+
+const loginForm = document.getElementById('loginForm');
+const loginUsername = document.getElementById('loginUsername');
+const loginPassword = document.getElementById('loginPassword');
+const loginSubmit = document.getElementById('loginSubmit');
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = loginUsername.value.trim();
+  const password = loginPassword.value.trim();
+
+  loginSubmit.classList.add('loading');
+  await new Promise((resolve) => setTimeout(resolve, 500)); // biar ada jeda "checking"
+  loginSubmit.classList.remove('loading');
+
+  const valid = checkCredentials(username, password);
+
+  if (valid) {
+    showNotif('success', 'Berhasil! Welcome ' + username + ' To ZEZO APP');
+    closeModal();
+    loginForm.reset();
+    // Sengaja TIDAK diarahkan ke dashboard dulu — diem di halaman ini.
+  } else {
+    showNotif('fail', 'Gagal! Ada Kesalahan Pada Username/Password');
+  }
+});
 
 if (window.matchMedia('(min-width:701px)').matches) {
   body.classList.add('cursor-ready');

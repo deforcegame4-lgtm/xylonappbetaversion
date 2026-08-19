@@ -1,0 +1,8 @@
+{
+  "name": "zezo-login-api",
+  "version": "1.0.0",
+  "description": "API cek login ZeZo App, konek ke MongoDB yang sama dengan bot Telegram",
+  "dependencies": {
+    "mongodb": "^6.8.0"
+  }
+}

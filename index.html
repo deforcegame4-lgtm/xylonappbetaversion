@@ -535,12 +535,24 @@ function showNotif(type, message) {
 glassNotifClose.addEventListener('click', () => glassNotif.classList.remove('show'));
 
 /* ---------- Login form ---------- */
-/* PENTING: validasi ini masih demo lokal (belum nyambung ke key dari bot Telegram).
-   Begitu bot & database key-nya siap, ganti bagian checkCredentials() ini jadi
-   fetch ke endpoint validasi key yang sebenarnya. */
-function checkCredentials(username, password) {
-  // Demo sementara: username "demo" & password "demo123" dianggap valid.
-  return username === 'demo' && password === 'demo123';
+/* Isi URL Vercel login-api kamu di sini setelah di-deploy, contoh:
+   'https://zezo-login-api.vercel.app' (tanpa garis miring di akhir) */
+const LOGIN_API_URL = 'ISI_URL_LOGIN_API_KAMU_DISINI';
+
+async function checkCredentials(username, password) {
+  if (!LOGIN_API_URL || LOGIN_API_URL.indexOf('ISI_URL_LOGIN_API') === 0) {
+    return { success: false, message: 'Login API belum disambungkan — isi LOGIN_API_URL di script.' };
+  }
+  try {
+    const res = await fetch(LOGIN_API_URL + '/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    return await res.json();
+  } catch (err) {
+    return { success: false, message: 'Gagal menghubungi server, coba lagi.' };
+  }
 }
 
 const loginForm = document.getElementById('loginForm');
@@ -554,13 +566,11 @@ loginForm.addEventListener('submit', async (e) => {
   const password = loginPassword.value.trim();
 
   loginSubmit.classList.add('loading');
-  await new Promise((resolve) => setTimeout(resolve, 500)); // biar ada jeda "checking"
+  const result = await checkCredentials(username, password);
   loginSubmit.classList.remove('loading');
 
-  const valid = checkCredentials(username, password);
-
-  if (valid) {
-    showNotif('success', 'Berhasil! Welcome ' + username + ' To ZEZO APP');
+  if (result.success) {
+    showNotif('success', 'Berhasil! Welcome ' + (result.username || username) + ' To ZEZO APP');
     closeModal();
     loginForm.reset();
     // Sengaja TIDAK diarahkan ke dashboard dulu — diem di halaman ini.

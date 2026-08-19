@@ -574,7 +574,7 @@ loginForm.addEventListener('submit', async (e) => {
     showNotif('success', 'Berhasil! Welcome ' + loggedInUser + ' To ZEZO APP');
     closeModal();
     loginForm.reset();
-    sessionStorage.setItem('zezo_username', loggedInUser);
+    localStorage.setItem('zezo_username', loggedInUser);
     setTimeout(() => { window.location.href = 'dashboard.html'; }, 1400);
   } else {
     showNotif('fail', 'Gagal! Ada Kesalahan Pada Username/Password');

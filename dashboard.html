@@ -580,7 +580,7 @@ body{
 
 <script>
 /* ---------- Lock: wajib login dulu, kalau belum ada sesi lempar balik ke index.html ---------- */
-if (!sessionStorage.getItem('zezo_username')) {
+if (!localStorage.getItem('zezo_username')) {
   window.location.replace('index.html');
 }
 
@@ -870,7 +870,7 @@ const greet = hour < 10 ? 'Selamat Pagi' : hour < 15 ? 'Selamat Siang' : hour < 
 document.getElementById('ovGreeting').textContent = greet;
 document.getElementById('lastAccess').textContent = new Date().toLocaleString('id-ID', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
 
-const savedUsername = sessionStorage.getItem('zezo_username');
+const savedUsername = localStorage.getItem('zezo_username');
 if (savedUsername) {
   document.getElementById('ovUsername').textContent = savedUsername;
 }

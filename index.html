@@ -570,10 +570,12 @@ loginForm.addEventListener('submit', async (e) => {
   loginSubmit.classList.remove('loading');
 
   if (result.success) {
-    showNotif('success', 'Berhasil! Welcome ' + (result.username || username) + ' To ZEZO APP');
+    const loggedInUser = result.username || username;
+    showNotif('success', 'Berhasil! Welcome ' + loggedInUser + ' To ZEZO APP');
     closeModal();
     loginForm.reset();
-    // Sengaja TIDAK diarahkan ke dashboard dulu — diem di halaman ini.
+    sessionStorage.setItem('zezo_username', loggedInUser);
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1400);
   } else {
     showNotif('fail', 'Gagal! Ada Kesalahan Pada Username/Password');
   }

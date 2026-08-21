@@ -10,9 +10,10 @@
 
 const { MongoClient } = require('mongodb');
 
-/* ================= ISI DI SINI: connection string MongoDB yang sama dipakai bot ================= */
-const MONGO_URI = 'mongodb+srv://rajawa110279_db_user:8dW7t7oMC7KIwWdo@zezodatabase.bvkyzb2.mongodb.net/?appName=zezodatabase';
-/* =================================================================================================== */
+/* Connection string DIAMBIL DARI Environment Variable Vercel, BUKAN ditulis di file ini.
+   Cara set: Vercel Dashboard → project ini → Settings → Environment Variables →
+   Name: MONGO_URI, Value: (connection string kamu) → Save → Redeploy. */
+const MONGO_URI = process.env.MONGO_URI;
 
 let cachedClient = null;
 
@@ -31,6 +32,7 @@ module.exports = async (req, res) => {
 
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ success: false, message: 'Method not allowed.' });
+  if (!MONGO_URI) return res.status(500).json({ success: false, message: 'MONGO_URI belum di-set di Environment Variables Vercel.' });
 
   let body = req.body;
   if (!body || typeof body === 'string') {
